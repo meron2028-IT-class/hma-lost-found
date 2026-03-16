@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Unknown Item – HMA Smart‑Find</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="logo-area">
+            <div class="logo-placeholder">HMA</div>
+            <span>Smart‑Find</span>
+        </div>
+       <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/discover.html">Discover</a>
+    <a href="/report.html">Scan QR</a>
+    <a href="/report-manual.html" class="active">Report Item</a>
+    <a href="/test-codes.html">Test Codes</a>  <!-- ADD THIS LINE -->
+</div>
+        <div class="user-info">
+            <span>Guest</span>
+            <div class="avatar-placeholder">👤</div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 style="margin-bottom: 30px;">Report Found Item (No QR)</h1>
+
+        <form id="manual-report-form" class="report-form" enctype="multipart/form-data">
+            <label>Location</label>
+            <select id="location" name="location" required>
+                <option value="">Select location</option>
+                <option value="Dining Hall">Dining Hall</option>
+                <option value="Library">Library</option>
+                <option value="Gym">Gym</option>
+                <option value="Dorm A">Dorm A</option>
+                <option value="Dorm B">Dorm B</option>
+                <option value="Classroom 1">Classroom 1</option>
+                <option value="Classroom 2">Classroom 2</option>
+            </select>
+
+            <label>Photo of the item</label>
+            <input type="file" id="photo" name="photo" accept="image/*" capture="environment" required>
+
+            <label>Additional Notes</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Describe the item (e.g., blue water bottle)"></textarea>
+
+            <button type="submit">Post to Discover</button>
+        </form>
+    </main>
+
+    <script src="/js/report-manual.js"></script>
+</body>
+</html>

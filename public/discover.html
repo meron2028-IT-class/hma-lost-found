@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover – HMA Smart‑Find</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="logo-area">
+            <div class="logo-placeholder">HMA</div>
+            <span>Smart‑Find</span>
+        </div>
+        <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/discover.html" class="active">Discover</a>
+    <a href="/report.html">Scan QR</a>
+    <a href="/report-manual.html">Report Item</a>
+    <a href="/test-codes.html">Test Codes</a>  <!-- ADD THIS LINE -->
+</div>
+        </div>
+        <div class="user-info">
+            <span>Guest</span>
+            <div class="avatar-placeholder">👤</div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 style="margin-bottom: 20px;">Discover Found Items</h1>
+
+        <section style="margin-bottom: 40px;">
+            <h2>📱 QR‑tagged Items Found</h2>
+            <div class="items-grid" id="qr-items-grid"></div>
+        </section>
+
+        <section>
+            <h2>❓ Unknown Items (no QR)</h2>
+            <div class="items-grid" id="unknown-items-grid"></div>
+        </section>
+    </main>
+
+
+    <script src="/js/discover.js"></script>
+</body>
+</html>

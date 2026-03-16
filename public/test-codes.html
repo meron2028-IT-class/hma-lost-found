@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Codes – HMA Lost and Found</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Test page specific overrides */
+        .product-price {
+            display: none; /* Remove prices */
+        }
+        
+        .product-card {
+            padding-bottom: var(--space-4);
+        }
+        
+        .debug-section {
+            background: var(--bg-secondary);
+            border: var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-top: var(--space-8);
+        }
+        
+        .debug-log {
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            font-family: monospace;
+            font-size: var(--text-sm);
+            border: var(--border-light);
+        }
+        
+        .debug-time {
+            color: var(--hma-orange);
+            margin-right: var(--space-3);
+        }
+        
+        .category-tabs {
+            display: flex;
+            gap: var(--space-6);
+            margin: var(--space-6) 0;
+            border-bottom: var(--border-light);
+            padding-bottom: var(--space-3);
+        }
+        
+        .category-tab {
+            color: var(--text-tertiary);
+            cursor: pointer;
+            padding-bottom: var(--space-3);
+            margin-bottom: -3px;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .category-tab.active {
+            color: var(--hma-orange);
+            border-bottom-color: var(--hma-orange);
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="flex-center">
+                <img src="/assets/hma-logo.png" alt="HMA" style="height: 40px; margin-right: var(--space-3);">
+                <span style="font-weight: 600; color: var(--hma-blue);">Lost and Found</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/scan-qr.html">Scan QR</a>
+                <a href="/report-item.html">Report Item</a>
+                <a href="/test-codes.html" class="active">Test Codes</a>
+            </div>
+            <div class="flex-center">
+                <span class="text-small" style="margin-right: var(--space-3);">ICT CTL Team</span>
+                <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 18px;">🔧</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="profile-header" style="margin-top: var(--space-6);">
+            <div class="profile-avatar">🧪</div>
+            <div class="profile-info">
+                <h1>Test QR Codes</h1>
+                <p>System diagnostics and QR code testing interface for ICT CTL Team</p>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="categoryTabs">
+            <span class="category-tab active" data-category="all">All Codes</span>
+            <span class="category-tab" data-category="ipad">iPad</span>
+            <span class="category-tab" data-category="airpods">AirPods</span>
+            <span class="category-tab" data-category="macbook">MacBook</span>
+            <span class="category-tab" data-category="accessories">Accessories</span>
+        </div>
+
+        <!-- QR Codes Grid -->
+        <div class="product-grid" id="qr-codes-grid">
+            <!-- IPAD001 -->
+            <div class="product-card" data-category="ipad">
+                <div class="product-image">📱</div>
+                <div class="product-code">IPAD001</div>
+                <div class="product-name">iPad Pro 12.9"</div>
+                <div class="product-owner">Jovani Tewodros</div>
+                <div class="product-email">jovanitewodros72@gmail.com</div>
+                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="/report.html?code=IPAD001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
+                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('IPAD001')">📋</button>
+                </div>
+            </div>
+
+            <!-- AIRP001 -->
+            <div class="product-card" data-category="airpods">
+                <div class="product-image">🎧</div>
+                <div class="product-code">AIRP001</div>
+                <div class="product-name">AirPods Pro</div>
+                <div class="product-owner">Jovani Tewodros</div>
+                <div class="product-email">jovanitewodros72@gmail.com</div>
+                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="/report.html?code=AIRP001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
+                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('AIRP001')">📋</button>
+                </div>
+            </div>
+
+            <!-- IPAD002 -->
+            <div class="product-card" data-category="ipad">
+                <div class="product-image">📱</div>
+                <div class="product-code">IPAD002</div>
+                <div class="product-name">iPad Air</div>
+                <div class="product-owner">Meron Shitaye</div>
+                <div class="product-email">meri.shitaye@gmail.com</div>
+                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="/report.html?code=IPAD002" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
+                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('IPAD002')">📋</button>
+                </div>
+            </div>
+
+            <!-- PEN001 -->
+            <div class="product-card" data-category="accessories">
+                <div class="product-image">✏️</div>
+                <div class="product-code">PEN001</div>
+                <div class="product-name">Apple Pencil</div>
+                <div class="product-owner">Meron Shitaye</div>
+                <div class="product-email">meri.shitaye@gmail.com</div>
+                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="/report.html?code=PEN001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
+                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('PEN001')">📋</button>
+                </div>
+            </div>
+
+            <!-- MAC001 -->
+            <div class="product-card" data-category="macbook">
+                <div class="product-image">💻</div>
+                <div class="product-code">MAC001</div>
+                <div class="product-name">MacBook Air</div>
+                <div class="product-owner">Meron Shitaye</div>
+                <div class="product-email">meron2028@hmacademy.org</div>
+                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="/report.html?code=MAC001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
+                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('MAC001')">📋</button>
+                </div>
+            </div>
+
+            <!-- CALC001 -->
+            <div class="product-card" data-category="accessories">
+                <div class="product-image">🧮</div>
+                <div class="product-code">CALC001</div>
+                <div class="product-name">TI-84 Calculator</div>
+                <div class="product-owner">Meron Shitaye</div>
+                <div class="product-email">meron2028@hmacademy.org</div>
+                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
+                    <a href="/report.html?code=CALC001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
+                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('CALC001')">📋</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Categories -->
+        <div style="margin-top: var(--space-8);">
+            <div class="section-title">
+                <h3>Test Categories</h3>
+                <a href="#" onclick="runAllTests(); return false;">Run All →</a>
+            </div>
+            
+            <div class="grid-3">
+                <div class="section-card">
+                    <div style="font-size: 32px; margin-bottom: var(--space-3);">📷</div>
+                    <h4>QR Scanner</h4>
+                    <p class="text-small">Test camera and QR code detection</p>
+                    <a href="/scan-qr.html" class="btn btn-secondary btn-sm" style="margin-top: var(--space-3);">Test Scanner →</a>
+                </div>
+                <div class="section-card">
+                    <div style="font-size: 32px; margin-bottom: var(--space-3);">🧪</div>
+                    <h4>Test Suite</h4>
+                    <p class="text-small">Run comprehensive system tests</p>
+                    <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-3);" onclick="runTestSuite(); return false;">Run Suite →</button>
+                </div>
+                <div class="section-card">
+                    <div style="font-size: 32px; margin-bottom: var(--space-3);">🔧</div>
+                    <h4>Debug Tools</h4>
+                    <p class="text-small">System diagnostics and logs</p>
+                    <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-3);" onclick="openDebugTools(); return false;">Debug →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Log -->
+        <div class="debug-section">
+            <div class="flex-between" style="margin-bottom: var(--space-4);">
+                <div class="flex-center">
+                    <span class="badge badge-info" style="margin-right: var(--space-3);">ICT CTL</span>
+                    <h4 style="margin-bottom: 0;">System Debug Log</h4>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="clearLogs()">Clear</button>
+            </div>
+            <div class="debug-log" id="debug-log">
+                <div><span class="debug-time">[10:15:23]</span> ✅ QR Scanner initialized</div>
+                <div><span class="debug-time">[10:15:24]</span> 📡 Found 6 test QR codes</div>
+                <div><span class="debug-time">[10:15:25]</span> 🔗 System ready for testing</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Category tabs
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                document.querySelectorAll('.product-card').forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Copy function with fallback
+        function copyCode(code) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert(`✅ Code ${code} copied to clipboard!`);
+                    addToLog(`📋 Copied ${code} to clipboard`);
+                }).catch(() => fallbackCopy(code));
+            } else {
+                fallbackCopy(code);
+            }
+        }
+
+        function fallbackCopy(code) {
+            const temp = document.createElement('textarea');
+            temp.value = code;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            alert(`✅ Code ${code} copied to clipboard!`);
+            addToLog(`📋 Copied ${code} to clipboard`);
+        }
+
+        function addToLog(msg) {
+            const log = document.getElementById('debug-log');
+            const time = new Date().toLocaleTimeString();
+            const newLog = document.createElement('div');
+            newLog.innerHTML = `<span class="debug-time">[${time}]</span> ${msg}`;
+            log.insertBefore(newLog, log.firstChild);
+        }
+
+        function runAllTests() {
+            addToLog('🚀 Running all tests...');
+            setTimeout(() => addToLog('✅ All tests passed'), 1000);
+        }
+
+        function runTestSuite() {
+            addToLog('🔬 Running test suite...');
+            setTimeout(() => addToLog('✅ Test suite completed'), 1500);
+        }
+
+        function openDebugTools() {
+            addToLog('🔧 Debug tools initialized');
+        }
+
+        function clearLogs() {
+            document.getElementById('debug-log').innerHTML = '<div><span class="debug-time">[12:00:00]</span> 🧹 Logs cleared</div>';
+        }
+    </script>
+</body>
+</html>
