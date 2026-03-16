@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMA Lost and Found System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="flex-center">
+                <img src="/assets/hma-logo.png" alt="HMA" style="height: 40px; margin-right: var(--space-3);">
+                <span style="font-weight: 600; color: var(--hma-blue);">Lost and Found</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/scan-qr.html">Scan QR</a>
+                <a href="/report-item.html">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+            </div>
+            <div class="flex-center">
+                <span class="text-small" style="margin-right: var(--space-3);">ICT CTL Team</span>
+                <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 18px;">🔧</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Left Sidebar (Profile Style) -->
+            <div class="profile-sidebar">
+                <div class="logo-area">
+                    <img src="/assets/hma-logo.png" alt="Haile-Manas Academy">
+                    <span>ICT CTL Team</span>
+                </div>
+                
+                <div class="stats-row" style="grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+                    <div class="stat-item">
+                        <div class="stat-value">247</div>
+                        <div class="stat-label">Total Items</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">189</div>
+                        <div class="stat-label">Returned</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">58</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">124</div>
+                        <div class="stat-label">QR Active</div>
+                    </div>
+                </div>
+
+                <div class="section-card" style="margin-top: var(--space-4);">
+                    <h4>Quick Actions</h4>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                        <a href="/scan-qr.html" class="btn btn-primary btn-block">📷 Scan QR Code</a>
+                        <a href="/report-item.html" class="btn btn-secondary btn-block">📝 Report Item</a>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h4>System Status</h4>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                        <div class="flex-between">
+                            <span class="text-small">Database</span>
+                            <span class="badge badge-success">Online</span>
+                        </div>
+                        <div class="flex-between">
+                            <span class="text-small">Email Service</span>
+                            <span class="badge badge-success">Active</span>
+                        </div>
+                        <div class="flex-between">
+                            <span class="text-small">QR Scanner</span>
+                            <span class="badge badge-success">Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">📋</div>
+                    <div class="profile-info">
+                        <h1>HMA Lost and Found System</h1>
+                        <p>Developed and maintained by the ICT CTL Team • Haile-Manas Academy</p>
+                    </div>
+                </div>
+
+                <!-- Stats Row (from inspiration) -->
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">My Reports</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Found Items</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Notifications</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Achievements</div>
+                    </div>
+                </div>
+
+                <!-- My Courses / Recent Items Section (from inspiration) -->
+                <div class="section-title">
+                    <h3>Recently Found Items</h3>
+                    <a href="/discover.html">View All →</a>
+                </div>
+                
+                <div class="item-list" id="recent-items">
+                    <!-- Populated by JavaScript -->
+                    <div class="item-row">
+                        <div class="item-info">
+                            <h4>iPad Pro 12.9"</h4>
+                            <p>Found at Library • 2 hours ago</p>
+                        </div>
+                        <span class="badge badge-warning">Found</span>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-info">
+                            <h4>AirPods Pro</h4>
+                            <p>Found at Gym • 5 hours ago</p>
+                        </div>
+                        <span class="badge badge-warning">Found</span>
+                    </div>
+                    <div class="item-row">
+                        <div class="item-info">
+                            <h4>TI-84 Calculator</h4>
+                            <p>Found at Dining Hall • Yesterday</p>
+                        </div>
+                        <span class="badge badge-warning">Found</span>
+                    </div>
+                </div>
+
+                <!-- Payment / Premium Section (from inspiration) -->
+                <div class="info-card">
+                    <h4>ICT CTL System Access</h4>
+                    <p>Developed and maintained by the ICT CTL Team of Haile-Manas Academy to support the HMA community through technology-driven solutions.</p>
+                    <ul>
+                        <li>✓ Real-time QR code scanning</li>
+                        <li>✓ Automatic email notifications</li>
+                        <li>✓ Centralized lost & found database</li>
+                        <li>✓ 24/7 system availability</li>
+                    </ul>
+                    <div class="flex-between" style="margin-top: var(--space-4);">
+                        <span class="text-small" style="color: rgba(255,255,255,0.8);">System Version 2.0.0</span>
+                        <button class="btn btn-primary btn-sm" onclick="window.location.href='/report-item.html'">Report Item →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load real data from API
+        fetch('/api/recent-qr')
+            .then(res => res.json())
+            .then(items => {
+                if (items && items.length > 0) {
+                    const list = document.getElementById('recent-items');
+                    list.innerHTML = items.slice(0, 3).map(item => `
+                        <div class="item-row">
+                            <div class="item-info">
+                                <h4>${item.item_name || 'Unknown Item'}</h4>
+                                <p>Found at ${item.location || 'Unknown'} • ${new Date(item.timestamp).toLocaleDateString()}</p>
+                            </div>
+                            <span class="badge badge-warning">Found</span>
+                        </div>
+                    `).join('');
+                }
+            });
+    </script>
+</body>
+</html>

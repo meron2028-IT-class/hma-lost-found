@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Found Item – HMA Lost and Found</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .alert {
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+            animation: slideDown 0.3s ease;
+        }
+        .alert-success {
+            background: #10B981;
+            color: white;
+        }
+        .alert-warning {
+            background: #F59E0B;
+            color: white;
+        }
+        .alert-error {
+            background: #EF4444;
+            color: white;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #loading {
+            text-align: center;
+            padding: var(--space-8);
+            color: var(--text-secondary);
+        }
+        #error {
+            background: #FEE2E2;
+            color: #991B1B;
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="flex-center">
+                <img src="/assets/hma-logo.png" alt="HMA" style="height: 40px; margin-right: var(--space-3);">
+                <span style="font-weight: 600; color: var(--hma-blue);">Lost and Found</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/scan-qr.html">Scan QR</a>
+                <a href="/report-item.html" class="active">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+            </div>
+            <div class="flex-center">
+                <span class="text-small" style="margin-right: var(--space-3);">ICT CTL Team</span>
+                <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 18px;">🔧</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="max-width: 600px; margin: var(--space-8) auto;">
+            <!-- Header -->
+            <div class="profile-header" style="margin-bottom: var(--space-6);">
+                <div class="profile-avatar">📝</div>
+                <div class="profile-info">
+                    <h1>Report Found Item</h1>
+                    <p>Help reunite lost items with their owners</p>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading">
+                <div style="text-align: center;">
+                    <div style="width: 40px; height: 40px; border: 3px solid var(--border-light); border-top-color: var(--hma-orange); border-radius: 50%; margin: 0 auto var(--space-4); animation: spin 1s linear infinite;"></div>
+                    <p>Loading item information...</p>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error"></div>
+
+            <!-- Report Form -->
+            <form id="qr-report-form" class="form-container" style="display: none; background: var(--bg-secondary); padding: var(--space-6); border-radius: var(--radius-lg); border: var(--border-light);">
+                <input type="hidden" id="item_code" name="item_code">
+
+                <!-- Item Info (Read Only) -->
+                <div class="form-group">
+                    <label class="form-label">Item</label>
+                    <input type="text" id="item_name" class="form-input" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Owner</label>
+                    <input type="text" id="owner_name" class="form-input" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Owner Email</label>
+                    <input type="email" id="owner_email" class="form-input" readonly>
+                </div>
+
+                <!-- Finder Information -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" id="finder_name" name="finder_name" class="form-input" placeholder="Anonymous" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Email</label>
+                        <input type="email" id="finder_email" name="finder_email" class="form-input" placeholder="So owner can contact you">
+                    </div>
+                </div>
+
+                <!-- Location Dropdown -->
+                <div class="form-group">
+                    <label class="form-label">Location Found</label>
+                    <select id="location" name="location" class="form-select" required>
+                        <option value="">Select location</option>
+                        <option value="Library">Library</option>
+                        <option value="Dining Hall">Dining Hall</option>
+                        <option value="Gym">Gym</option>
+                        <option value="Dorm A">Dorm A</option>
+                        <option value="Dorm B">Dorm B</option>
+                        <option value="Classroom 1">Classroom 1</option>
+                        <option value="Classroom 2">Classroom 2</option>
+                        <option value="Computer Lab">Computer Lab</option>
+                        <option value="Sports Field">Sports Field</option>
+                    </select>
+                </div>
+
+                <!-- Photo Upload -->
+                <div class="form-group">
+                    <label class="form-label">Photo (optional)</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" capture="environment" class="form-input" style="padding: var(--space-2);">
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="form-group">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea id="notes" name="notes" class="form-textarea" rows="4" placeholder="e.g., Left on the third table, blue case, etc."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-6);">📧 Send Notification to Owner</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS with your public key
+        emailjs.init('bRVHUE9wFV4psMnIu');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const form = document.getElementById('qr-report-form');
+
+            if (!code) {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'No QR code detected. Please scan a valid HMA QR code.';
+                return;
+            }
+
+            // Fetch item data
+            fetch(`/api/item/${code}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Item not found');
+                    }
+                    return response.json();
+                })
+                .then(item => {
+                    // Fill form with item data
+                    document.getElementById('item_code').value = code;
+                    document.getElementById('item_name').value = `${item.item_name}${item.description ? ' - ' + item.description : ''}`;
+                    document.getElementById('owner_name').value = item.owner_name || '';
+                    document.getElementById('owner_email').value = item.owner_email || '';
+
+                    loadingDiv.style.display = 'none';
+                    form.style.display = 'block';
+                })
+                .catch(err => {
+                    loadingDiv.style.display = 'none';
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `
+                        <strong>❌ Item not found</strong>
+                        <p style="margin-top: var(--space-2);">Code: ${code} is not registered in the system.</p>
+                        <p>Please contact ICT CTL Team for assistance.</p>
+                    `;
+                });
+
+            // Handle form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+
+                // Get form data
+                const formData = new FormData(form);
+                const itemCode = document.getElementById('item_code').value;
+                const ownerEmail = document.getElementById('owner_email').value;
+                const ownerName = document.getElementById('owner_name').value;
+                const itemName = document.getElementById('item_name').value;
+                const location = formData.get('location');
+                const finderName = formData.get('finder_name') || 'Anonymous';
+                const finderEmail = formData.get('finder_email') || 'No email provided';
+                const notes = formData.get('notes') || 'No additional notes';
+                const photoFile = document.getElementById('photo').files[0];
+
+                try {
+                    // 1. Send email via EmailJS
+                    const templateParams = {
+                        to_email: ownerEmail,
+                        to_name: ownerName,
+                        from_name: 'HMA Lost and Found',
+                        finder_name: finderName,
+                        finder_email: finderEmail,
+                        item_name: itemName,
+                        item_code: itemCode,
+                        location: location,
+                        notes: notes,
+                        reply_to: finderEmail
+                    };
+
+                    await emailjs.send('service_ym11glb', 'template_mgg9tjx', templateParams);
+                    showMessage('✅ Email sent to owner successfully!', 'success');
+
+                    // 2. Save report to database
+                    const reportData = new FormData();
+                    reportData.append('item_code', itemCode);
+                    reportData.append('location', location);
+                    reportData.append('finder_name', finderName);
+                    reportData.append('finder_email', finderEmail);
+                    reportData.append('notes', notes);
+                    if (photoFile) reportData.append('photo', photoFile);
+
+                    const response = await fetch('/api/report', {
+                        method: 'POST',
+                        body: reportData
+                    });
+
+                    if (response.ok) {
+                        showMessage('✅ Report saved to database!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/discover.html';
+                        }, 2000);
+                    } else {
+                        throw new Error('Failed to save report');
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('⚠️ Email may not have sent, but report was saved', 'warning');
+                    
+                    // Still try to save the report even if email fails
+                    try {
+                        const reportData = new FormData();
+                        reportData.append('item_code', itemCode);
+                        reportData.append('location', location);
+                        reportData.append('finder_name', finderName);
+                        reportData.append('finder_email', finderEmail);
+                        reportData.append('notes', notes);
+                        if (photoFile) reportData.append('photo', photoFile);
+
+                        await fetch('/api/report', {
+                            method: 'POST',
+                            body: reportData
+                        });
+                        
+                        setTimeout(() => {
+                            window.location.href = '/discover.html';
+                        }, 2000);
+                    } catch (saveError) {
+                        showMessage('❌ Failed to save report. Please contact ICT.', 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '📧 Send Notification to Owner';
+                    }
+                }
+            });
+        });
+
+        // Helper function to show messages
+        function showMessage(text, type) {
+            const form = document.getElementById('qr-report-form');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `alert alert-${type}`;
+            msgDiv.textContent = text;
+            form.parentNode.insertBefore(msgDiv, form);
+            setTimeout(() => msgDiv.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
