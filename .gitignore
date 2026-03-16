@@ -1,0 +1,27 @@
+﻿# Dependencies
+node_modules/
+package-lock.json
+
+# Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
