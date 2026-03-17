@@ -144,3 +144,33 @@ module.exports = {
     getUnknownItems,
     db
 };
+
+// Add after existing table creations
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        gender TEXT,
+        grade TEXT,
+        photo_url TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+`);
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS user_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        item_name TEXT NOT NULL,
+        description TEXT,
+        item_code TEXT UNIQUE NOT NULL,
+        qr_code_path TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+`);
+
+// Modify items table to link to users (if you still want to keep it, but user_items replaces it)
+// We'll keep items for existing demo data, but new items go to user_items.

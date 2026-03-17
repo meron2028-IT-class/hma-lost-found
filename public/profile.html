@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Items - HMA Lost and Found</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="top-nav">...</nav>
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-avatar" id="userPhoto"></div>
+            <div class="profile-info">
+                <h1 id="userName"></h1>
+                <p id="userEmail"></p>
+            </div>
+        </div>
+        
+        <h2>My Items</h2>
+        <button id="showAddItemForm" class="btn btn-primary">+ Add New Item</button>
+        
+        <div id="addItemForm" style="display: none; margin-top: 20px;">
+            <h3>Add Item</h3>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" name="item_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Generate QR Code</button>
+            </form>
+        </div>
+        
+        <div class="items-grid" id="itemsList"></div>
+    </div>
+    <script src="/js/profile.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</body>
+</html>

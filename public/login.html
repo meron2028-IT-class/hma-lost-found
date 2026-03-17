@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - HMA Lost and Found</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="top-nav">...</nav>
+    <div class="container">
+        <div class="form-container">
+            <h2>Create Account</h2>
+            <form id="registerForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>School Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select name="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Grade</label>
+                        <select name="grade">
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Profile Photo</label>
+                    <input type="file" name="photo" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            <p>Already have an account? <a href="/login.html">Login</a></p>
+        </div>
+    </div>
+    <script src="/js/register.js"></script>
+</body>
+</html>
