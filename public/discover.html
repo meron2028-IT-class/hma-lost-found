@@ -3,45 +3,526 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover – HMA Smart‑Find</title>
+    <title>Discover – HMA Lost and Found</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Additional styles specific to discover page */
+        .page-header {
+            background: linear-gradient(135deg, var(--hma-blue) 0%, var(--hma-blue-light) 100%);
+            color: white;
+            padding: var(--space-8) 0;
+            margin-bottom: var(--space-8);
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+
+        .page-header h1 {
+            color: white;
+            margin-bottom: var(--space-2);
+        }
+
+        .page-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: var(--text-lg);
+            max-width: 600px;
+        }
+
+        .filter-section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            margin-bottom: var(--space-8);
+            border: var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-box {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: var(--space-3) var(--space-4);
+            border: var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--hma-orange);
+        }
+
+        .search-box button {
+            padding: var(--space-3) var(--space-6);
+            background: var(--hma-orange);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: var(--space-2) var(--space-3);
+            border: var(--border-light);
+            border-radius: var(--radius-md);
+            background: white;
+            min-width: 150px;
+        }
+
+        .section-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+            border-bottom: var(--border-light);
+            padding-bottom: var(--space-2);
+        }
+
+        .section-tab {
+            padding: var(--space-2) var(--space-4);
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            font-weight: var(--font-medium);
+        }
+
+        .section-tab.active {
+            color: var(--hma-orange);
+            border-bottom: 2px solid var(--hma-orange);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-5);
+            margin-top: var(--space-6);
+        }
+
+        .item-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: var(--border-light);
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--hma-orange);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.1);
+        }
+
+        .item-image {
+            height: 180px;
+            background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-badge {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+        }
+
+        .badge-qr {
+            background: var(--hma-blue);
+            color: white;
+        }
+
+        .badge-unknown {
+            background: var(--hma-orange);
+            color: white;
+        }
+
+        .item-details {
+            padding: var(--space-4);
+        }
+
+        .item-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .item-location {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+            margin-bottom: var(--space-2);
+        }
+
+        .item-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-3);
+        }
+
+        .item-owner {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) 0;
+            border-top: var(--border-light);
+            margin-top: var(--space-2);
+        }
+
+        .owner-avatar {
+            width: 24px;
+            height: 24px;
+            background: var(--gray-300);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+        }
+
+        .owner-info {
+            font-size: var(--text-sm);
+        }
+
+        .owner-name {
+            font-weight: var(--font-medium);
+            color: var(--text-primary);
+        }
+
+        .owner-email {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: var(--space-12);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border: var(--border-light);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .empty-state p {
+            color: var(--text-tertiary);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+            margin: var(--space-6) 0;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: var(--border-light);
+        }
+
+        .stat-number {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--hma-orange);
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+        }
+    </style>
 </head>
 <body>
     <nav class="top-nav">
-        <div class="logo-area">
-            <div class="logo-placeholder">HMA</div>
-            <span>Smart‑Find</span>
-        </div>
-        <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/discover.html" class="active">Discover</a>
-    <a href="/report.html">Scan QR</a>
-    <a href="/report-manual.html">Report Item</a>
-    <a href="/test-codes.html">Test Codes</a>  <!-- ADD THIS LINE -->
-</div>
-        </div>
-        <div class="user-info">
-            <span>Guest</span>
-            <div class="avatar-placeholder">👤</div>
+        <div class="nav-container">
+            <div class="flex-center">
+                <div class="logo-placeholder">HMA</div>
+                <span style="font-weight: 600; color: var(--hma-blue);">Smart-Find</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/discover.html" class="active">Discover</a>
+                <a href="/report.html">Scan QR</a>
+                <a href="/report-manual.html">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+            </div>
+            <div class="user-info">
+                <span>Guest</span>
+                <div class="avatar-placeholder">👤</div>
+            </div>
         </div>
     </nav>
 
-    <main class="container">
-        <h1 style="margin-bottom: 20px;">Discover Found Items</h1>
+    <!-- Beautiful Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Discover Found Items</h1>
+            <p>Browse through items reported by the HMA community. Found something? Click "Report Item" to help reunite it with its owner.</p>
+            
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-number" id="total-items">0</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="qr-items">0</div>
+                    <div class="stat-label">QR Tagged</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="unknown-items">0</div>
+                    <div class="stat-label">Unclaimed</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <section style="margin-bottom: 40px;">
-            <h2>📱 QR‑tagged Items Found</h2>
-            <div class="items-grid" id="qr-items-grid"></div>
-        </section>
+    <div class="container">
+        <!-- Search and Filter Section -->
+        <div class="filter-section">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search by item name, location, or owner...">
+                <button onclick="filterItems()">🔍 Search</button>
+            </div>
+            <div class="filter-row">
+                <select class="filter-select" id="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="qr">QR Tagged Items</option>
+                    <option value="unknown">Unknown Items</option>
+                </select>
+                <select class="filter-select" id="location-filter">
+                    <option value="all">All Locations</option>
+                    <option value="Library">Library</option>
+                    <option value="Gym">Gym</option>
+                    <option value="Dining Hall">Dining Hall</option>
+                    <option value="Dorm A">Dorm A</option>
+                    <option value="Dorm B">Dorm B</option>
+                </select>
+                <select class="filter-select" id="sort-filter">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
 
-        <section>
-            <h2>❓ Unknown Items (no QR)</h2>
-            <div class="items-grid" id="unknown-items-grid"></div>
-        </section>
-    </main>
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <span class="section-tab active" onclick="switchTab('all')">📦 All Items</span>
+            <span class="section-tab" onclick="switchTab('qr')">📱 QR Tagged</span>
+            <span class="section-tab" onclick="switchTab('unknown')">❓ Unknown Items</span>
+        </div>
 
+        <!-- Items Grid -->
+        <div class="items-grid" id="items-grid">
+            <!-- Loading State -->
+            <div class="empty-state">
+                <div class="empty-icon">⌛</div>
+                <h3>Loading items...</h3>
+                <p>Please wait while we fetch the latest reports.</p>
+            </div>
+        </div>
+    </div>
 
-    <script src="/js/discover.js"></script>
+    <script>
+        let allItems = [];
+        let unknownItems = [];
+        let currentTab = 'all';
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadItems();
+        });
+
+        function loadItems() {
+            // Fetch QR-tagged items
+            fetch('/api/recent-qr')
+                .then(res => res.json())
+                .then(data => {
+                    allItems = data.map(item => ({
+                        ...item,
+                        type: 'qr',
+                        category: 'qr'
+                    }));
+                    updateStats();
+                    renderItems();
+                })
+                .catch(err => {
+                    console.error('Error loading QR items:', err);
+                });
+
+            // Fetch unknown items
+            fetch('/api/unknown')
+                .then(res => res.json())
+                .then(data => {
+                    unknownItems = data.map(item => ({
+                        ...item,
+                        type: 'unknown',
+                        category: 'unknown',
+                        item_name: 'Unknown Item',
+                        owner_name: 'Unclaimed',
+                        owner_email: null
+                    }));
+                    allItems = [...allItems, ...unknownItems];
+                    updateStats();
+                    renderItems();
+                })
+                .catch(err => {
+                    console.error('Error loading unknown items:', err);
+                });
+        }
+
+        function updateStats() {
+            document.getElementById('total-items').textContent = allItems.length;
+            document.getElementById('qr-items').textContent = allItems.filter(i => i.type === 'qr').length;
+            document.getElementById('unknown-items').textContent = allItems.filter(i => i.type === 'unknown').length;
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            const categoryFilter = document.getElementById('category-filter').value;
+            const locationFilter = document.getElementById('location-filter').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const sortBy = document.getElementById('sort-filter').value;
+
+            let filteredItems = [...allItems];
+
+            // Apply category filter
+            if (categoryFilter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === categoryFilter);
+            }
+
+            // Apply tab filter
+            if (currentTab !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === currentTab);
+            }
+
+            // Apply location filter
+            if (locationFilter !== 'all') {
+                filteredItems = filteredItems.filter(item => item.location === locationFilter);
+            }
+
+            // Apply search
+            if (searchTerm) {
+                filteredItems = filteredItems.filter(item => 
+                    (item.item_name?.toLowerCase().includes(searchTerm) || false) ||
+                    (item.location?.toLowerCase().includes(searchTerm) || false) ||
+                    (item.owner_name?.toLowerCase().includes(searchTerm) || false)
+                );
+            }
+
+            // Apply sorting
+            filteredItems.sort((a, b) => {
+                const dateA = new Date(a.timestamp || 0);
+                const dateB = new Date(b.timestamp || 0);
+                return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>No items found</h3>
+                        <p>Try adjusting your filters or check back later.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filteredItems.map(item => `
+                <div class="item-card">
+                    <div class="item-image">
+                        ${item.photo_url ? 
+                            `<img src="${item.photo_url}" alt="${item.item_name}">` : 
+                            `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--gray-200); color:var(--text-tertiary); font-size:32px;">
+                                ${item.type === 'qr' ? '📱' : '❓'}
+                            </div>`
+                        }
+                        <span class="item-badge ${item.type === 'qr' ? 'badge-qr' : 'badge-unknown'}">
+                            ${item.type === 'qr' ? 'QR Tagged' : 'Unclaimed'}
+                        </span>
+                    </div>
+                    <div class="item-details">
+                        <h3 class="item-name">${item.item_name || 'Unknown Item'}</h3>
+                        <div class="item-location">
+                            <span>📍</span> ${item.location || 'Unknown location'}
+                        </div>
+                        <div class="item-meta">
+                            <span>📅 ${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : 'Recently'}</span>
+                            ${item.type === 'qr' ? '<span>⚡ QR Scan</span>' : ''}
+                        </div>
+                        ${item.notes ? `<p style="font-size:var(--text-sm); color:var(--text-secondary); margin:var(--space-2) 0;">📝 ${item.notes}</p>` : ''}
+                        <div class="item-owner">
+                            <div class="owner-avatar">${item.owner_name ? item.owner_name.charAt(0) : '?'}</div>
+                            <div class="owner-info">
+                                <div class="owner-name">${item.owner_name || 'Unknown'}</div>
+                                ${item.owner_email ? `<div class="owner-email">${item.owner_email}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterItems() {
+            renderItems();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Reset category filter to match tab
+            document.getElementById('category-filter').value = tab === 'all' ? 'all' : tab;
+            
+            renderItems();
+        }
+
+        // Add event listeners
+        document.getElementById('category-filter').addEventListener('change', filterItems);
+        document.getElementById('location-filter').addEventListener('change', filterItems);
+        document.getElementById('sort-filter').addEventListener('change', filterItems);
+        document.getElementById('search-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') filterItems();
+        });
+    </script>
 </body>
 </html>
