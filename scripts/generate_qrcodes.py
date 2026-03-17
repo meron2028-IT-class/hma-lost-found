@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 DB_PATH = '../hma.db'
 OUTPUT_FOLDER = 'qr_codes'
-BASE_URL = 'http://localhost:3000/report.html'  # Change to your deployed URL later
+BASE_URL = 'https://hma-lost-found-production.up.railway.app/report.html'
 
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
@@ -15,6 +15,7 @@ cursor.execute("""
     SELECT items.item_code, items.item_name, students.name 
     FROM items 
     JOIN students ON items.student_id = students.id
+    ORDER BY items.item_code
 """)
 items = cursor.fetchall()
 
@@ -28,7 +29,6 @@ for code, item_name, owner_name in items:
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
     
-    # Save with item code as filename
     filename = os.path.join(OUTPUT_FOLDER, f"{code}.png")
     img.save(filename)
     print(f"✅ {code}: {item_name} (Owner: {owner_name})")
@@ -36,4 +36,4 @@ for code, item_name, owner_name in items:
 conn.close()
 print("-" * 50)
 print(f"📁 QR codes saved to: {OUTPUT_FOLDER}/")
-print("🎉 Done!")
+print("🎉 Done! Total QR codes:", len(items))
