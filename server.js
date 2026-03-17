@@ -6,9 +6,10 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const QRCode = require('qrcode');
 const db = require('./database');
+const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;  // THIS IS THE IMPORTANT LINE - USE 3000!
 
 // ===== MIDDLEWARE =====
 app.use(cors());
@@ -22,7 +23,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        maxAge: 1000 * 60 * 60 * 24,
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true
     }
@@ -31,7 +32,11 @@ app.use(session({
 // ===== MULTER CONFIGURATION =====
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/')
+        const uploadDir = path.join(__dirname, 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -42,25 +47,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image files are allowed'));
-        }
-    }
+    limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// Create uploads directory if it doesn't exist
-const fs = require('fs');
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
 // Serve uploaded files
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// ===== HEALTH CHECK - THIS IS IMPORTANT FOR RAILWAY =====
+app.get('/', (req, res) => {
+    res.send('HMA Lost and Found API is running!');
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
 
 // ===== DATABASE INITIALIZATION =====
 db.initialize();
@@ -80,24 +80,20 @@ app.post('/api/register', upload.single('photo'), async (req, res) => {
         const { name, email, password, gender, grade } = req.body;
         const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
 
-        // Check if user exists
         const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
         if (existing) {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
-        // Hash password
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(password, saltRounds);
 
-        // Insert user
         const stmt = db.prepare(`
             INSERT INTO users (name, email, password_hash, gender, grade, photo_url)
             VALUES (?, ?, ?, ?, ?, ?)
         `);
         const result = stmt.run(name, email, password_hash, gender, grade, photo_url);
 
-        // Set session
         req.session.userId = result.lastInsertRowid;
         req.session.userEmail = email;
 
@@ -175,16 +171,13 @@ app.post('/api/user-items', express.json(), async (req, res) => {
     try {
         const { item_name, description } = req.body;
         
-        // Generate unique code
         const timestamp = Date.now().toString(36);
         const random = Math.random().toString(36).substring(2, 8).toUpperCase();
         const item_code = `U${timestamp}${random}`;
 
-        // Generate QR code as data URL
         const baseUrl = process.env.BASE_URL || 'https://hma-lost-found-production.up.railway.app';
         const qrDataUrl = await QRCode.toDataURL(`${baseUrl}/report.html?code=${item_code}`);
 
-        // Save to database
         const stmt = db.prepare(`
             INSERT INTO user_items (user_id, item_name, description, item_code, qr_code_path)
             VALUES (?, ?, ?, ?, ?)
@@ -225,13 +218,12 @@ app.get('/api/user-items', (req, res) => {
     }
 });
 
-// ---------- ITEM LOOKUP (for QR scans) ----------
+// ---------- ITEM LOOKUP ----------
 
 app.get('/api/item/:code', (req, res) => {
     const { code } = req.params;
 
     try {
-        // First try old items table
         let item = db.prepare(`
             SELECT 
                 items.item_code, 
@@ -244,7 +236,6 @@ app.get('/api/item/:code', (req, res) => {
             WHERE items.item_code = ?
         `).get(code);
 
-        // If not found, try user_items table
         if (!item) {
             item = db.prepare(`
                 SELECT 
@@ -365,7 +356,7 @@ app.get('/api/stats', (req, res) => {
         const stats = {
             totalItems: db.prepare('SELECT COUNT(*) as count FROM items').get().count,
             totalReports: db.prepare('SELECT COUNT(*) as count FROM reports').get().count,
-            totalUsers: db.prepare('SELECT COUNT(*) as count FROM users').get().count,
+            totalUsers: db.prepare('SELECT COUNT(*) as count FROM users').get().count || 0,
             totalUnknown: db.prepare('SELECT COUNT(*) as count FROM unknown_items').get().count
         };
         res.json(stats);
@@ -376,6 +367,7 @@ app.get('/api/stats', (req, res) => {
     }
 });
 
+// ===== START SERVER =====
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n🚀 Server running on port ${PORT}`);
     console.log(`📱 QR test: http://localhost:${PORT}/report.html?code=IPAD001`);
@@ -383,4 +375,5 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`🧪 Test page: http://localhost:${PORT}/test-codes.html`);
     console.log(`👤 Register: http://localhost:${PORT}/register.html`);
     console.log(`📋 Profile: http://localhost:${PORT}/profile.html`);
+    console.log(`✅ Health check: http://localhost:${PORT}/health`);
 });
