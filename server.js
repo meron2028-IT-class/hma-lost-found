@@ -376,9 +376,8 @@ app.get('/api/stats', (req, res) => {
     }
 });
 
-// ===== START SERVER =====
-app.listen(PORT, () => {
-    console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n🚀 Server running on port ${PORT}`);
     console.log(`📱 QR test: http://localhost:${PORT}/report.html?code=IPAD001`);
     console.log(`🔍 Discover: http://localhost:${PORT}/discover.html`);
     console.log(`🧪 Test page: http://localhost:${PORT}/test-codes.html`);
