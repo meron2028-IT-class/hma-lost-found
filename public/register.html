@@ -1,38 +1,197 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - HMA Lost and Found</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .auth-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-title h2 {
+            color: var(--hma-blue);
+            margin-bottom: 10px;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--hma-orange);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-register {
+            width: 100%;
+            padding: 15px;
+            background: var(--hma-orange);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-register:hover {
+            background: var(--hma-orange-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(249,115,22,0.3);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .auth-footer a {
+            color: var(--hma-orange);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <nav class="top-nav">...</nav>
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="flex-center">
+                <div class="logo-placeholder">HMA</div>
+                <span>Lost and Found</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/report.html">Scan QR</a>
+                <a href="/report-manual.html">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+                <a href="/register.html" class="auth-link active">Register</a>
+                <a href="/login.html" class="auth-link">Login</a>
+                <a href="/profile.html" class="auth-link profile-link" style="display:none;">Profile</a>
+            </div>
+            <div class="user-info">
+                <span>Guest</span>
+                <div class="avatar-placeholder">👤</div>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <div class="form-container">
-            <h2>Create Account</h2>
+        <div class="auth-container">
+            <div class="auth-title">
+                <h2>Create Account</h2>
+                <p>Join the HMA Lost and Found community</p>
+            </div>
+
+            <div id="message" class="message"></div>
+
             <form id="registerForm" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" name="name" required>
+                    <input type="text" name="name" placeholder="Enter your full name" required>
                 </div>
+
                 <div class="form-group">
                     <label>School Email</label>
-                    <input type="email" name="email" required>
+                    <input type="email" name="email" placeholder="you@hmacademy.org" required>
                 </div>
+
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" required>
+                    <input type="password" name="password" placeholder="Create a password" required>
                 </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Gender</label>
-                        <select name="gender">
+                        <select name="gender" required>
+                            <option value="">Select</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label>Grade</label>
-                        <select name="grade">
+                        <select name="grade" required>
+                            <option value="">Select</option>
                             <option value="9">Grade 9</option>
                             <option value="10">Grade 10</option>
                             <option value="11">Grade 11</option>
@@ -40,15 +199,66 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-group">
-                    <label>Profile Photo</label>
+                    <label>Profile Photo (optional)</label>
                     <input type="file" name="photo" accept="image/*">
                 </div>
-                <button type="submit" class="btn btn-primary">Register</button>
+
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <span>Register</span>
+                </button>
             </form>
-            <p>Already have an account? <a href="/login.html">Login</a></p>
+
+            <div class="auth-footer">
+                Already have an account? <a href="/login.html">Login here</a>
+            </div>
         </div>
     </div>
-    <script src="/js/register.js"></script>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('registerBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span>Registering...</span><span class="loading"></span>';
+            btn.disabled = true;
+
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = 'message';
+            messageDiv.style.display = 'none';
+
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.innerHTML = `✅ Registration successful! Welcome, ${formData.get('name')}! Redirecting to profile...`;
+                    messageDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = '/profile.html';
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'Registration failed');
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.innerHTML = `❌ Error: ${error.message}`;
+                messageDiv.style.display = 'block';
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
