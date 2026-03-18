@@ -55,7 +55,33 @@ function initialize() {
         )
     `);
 
-    // Check if we have data
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            gender TEXT,
+            grade TEXT,
+            photo_url TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS user_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            item_name TEXT NOT NULL,
+            description TEXT,
+            item_code TEXT UNIQUE NOT NULL,
+            qr_code_path TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    `);
+
+    // Check if we have sample data
     const studentCount = db.prepare('SELECT COUNT(*) as count FROM students').get().count;
     
     if (studentCount === 0) {
@@ -76,13 +102,14 @@ function initialize() {
         insertItem.run('MAC001', 'MacBook Air', 'MacBook Air M1 Silver', 3);
         insertItem.run('CALC001', 'Calculator', 'TI-84 Plus Calculator', 3);
         
-        console.log('Sample data added!');
+        console.log('✅ Sample data added!');
     }
 }
 
-// Get item by code
+// Get item by code (works with both tables)
 function getItemByCode(code) {
-    const sql = `
+    // Try items table first
+    let item = db.prepare(`
         SELECT 
             items.item_code, 
             items.item_name, 
@@ -92,49 +119,112 @@ function getItemByCode(code) {
         FROM items 
         JOIN students ON items.student_id = students.id
         WHERE items.item_code = ?
-    `;
-    return db.prepare(sql).get(code);
+    `).get(code);
+    
+    // If not found, try user_items table
+    if (!item) {
+        item = db.prepare(`
+            SELECT 
+                ui.item_code, 
+                ui.item_name, 
+                ui.description,
+                u.name AS owner_name, 
+                u.email AS owner_email
+            FROM user_items ui
+            JOIN users u ON ui.user_id = u.id
+            WHERE ui.item_code = ?
+        `).get(code);
+    }
+    
+    return item;
 }
 
 // Add a report
 function addReport({ item_code, location, finder_name, finder_email, notes, photo_url }) {
-    const sql = `
+    const stmt = db.prepare(`
         INSERT INTO reports (item_code, location, finder_name, finder_email, notes, photo_url)
         VALUES (?, ?, ?, ?, ?, ?)
-    `;
-    const result = db.prepare(sql).run(item_code, location, finder_name, finder_email, notes, photo_url);
+    `);
+    const result = stmt.run(item_code, location, finder_name, finder_email, notes, photo_url);
     return result.lastInsertRowid;
 }
 
 // Get recent reports
-function getRecentReports(limit = 10) {
-    const sql = `
+function getRecentReports(limit = 20) {
+    return db.prepare(`
         SELECT reports.*, items.item_name, students.name AS owner_name
         FROM reports
         JOIN items ON reports.item_code = items.item_code
         JOIN students ON items.student_id = students.id
         ORDER BY reports.timestamp DESC
         LIMIT ?
-    `;
-    return db.prepare(sql).all(limit);
+    `).all(limit);
 }
 
 // Add unknown item
 function addUnknownItem({ location, notes, photo_url }) {
-    const sql = `
+    const stmt = db.prepare(`
         INSERT INTO unknown_items (location, notes, photo_url)
         VALUES (?, ?, ?)
-    `;
-    const result = db.prepare(sql).run(location, notes, photo_url);
+    `);
+    const result = stmt.run(location, notes, photo_url);
     return result.lastInsertRowid;
 }
 
 // Get unknown items
 function getUnknownItems() {
-    const sql = `SELECT * FROM unknown_items ORDER BY timestamp DESC`;
-    return db.prepare(sql).all();
+    return db.prepare(`
+        SELECT * FROM unknown_items 
+        ORDER BY timestamp DESC
+    `).all();
 }
 
+// User functions
+function createUser({ name, email, password_hash, gender, grade, photo_url }) {
+    const stmt = db.prepare(`
+        INSERT INTO users (name, email, password_hash, gender, grade, photo_url)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    const result = stmt.run(name, email, password_hash, gender, grade, photo_url);
+    return result.lastInsertRowid;
+}
+
+function getUserByEmail(email) {
+    return db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+}
+
+function getUserById(id) {
+    return db.prepare('SELECT id, name, email, gender, grade, photo_url FROM users WHERE id = ?').get(id);
+}
+
+function getUserItems(userId) {
+    return db.prepare(`
+        SELECT * FROM user_items 
+        WHERE user_id = ? 
+        ORDER BY created_at DESC
+    `).all(userId);
+}
+
+function addUserItem({ user_id, item_name, description, item_code }) {
+    const stmt = db.prepare(`
+        INSERT INTO user_items (user_id, item_name, description, item_code)
+        VALUES (?, ?, ?, ?)
+    `);
+    const result = stmt.run(user_id, item_name, description, item_code);
+    return result.lastInsertRowid;
+}
+
+// Stats
+function getStats() {
+    return {
+        totalItems: db.prepare('SELECT COUNT(*) as count FROM items').get().count,
+        totalReports: db.prepare('SELECT COUNT(*) as count FROM reports').get().count,
+        totalUsers: db.prepare('SELECT COUNT(*) as count FROM users').get().count || 0,
+        totalUnknown: db.prepare('SELECT COUNT(*) as count FROM unknown_items').get().count
+    };
+}
+
+// Export all functions
 module.exports = {
     initialize,
     getItemByCode,
@@ -142,35 +232,11 @@ module.exports = {
     getRecentReports,
     addUnknownItem,
     getUnknownItems,
-    db
+    createUser,
+    getUserByEmail,
+    getUserById,
+    getUserItems,
+    addUserItem,
+    getStats,
+    db // Export db for server.js to use
 };
-
-// Add after existing table creations
-db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        gender TEXT,
-        grade TEXT,
-        photo_url TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-`);
-
-db.exec(`
-    CREATE TABLE IF NOT EXISTS user_items (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        item_name TEXT NOT NULL,
-        description TEXT,
-        item_code TEXT UNIQUE NOT NULL,
-        qr_code_path TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(id)
-    )
-`);
-
-// Modify items table to link to users (if you still want to keep it, but user_items replaces it)
-// We'll keep items for existing demo data, but new items go to user_items.

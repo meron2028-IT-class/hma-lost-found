@@ -29,6 +29,15 @@ app.use(session({
     }
 }));
 
+// SIMPLE TEST ROUTE - ADD THIS!
+app.get('/', (req, res) => {
+    res.send('🚀 HMA Lost and Found API is RUNNING!');
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
+
 // ===== MULTER CONFIGURATION =====
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -114,7 +123,7 @@ app.post('/api/login', express.json(), async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+        const user = db.getUserByEmail(email);
         if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
@@ -367,13 +376,7 @@ app.get('/api/stats', (req, res) => {
     }
 });
 
-// ===== START SERVER =====
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n🚀 Server running on port ${PORT}`);
-    console.log(`📱 QR test: http://localhost:${PORT}/report.html?code=IPAD001`);
-    console.log(`🔍 Discover: http://localhost:${PORT}/discover.html`);
-    console.log(`🧪 Test page: http://localhost:${PORT}/test-codes.html`);
-    console.log(`👤 Register: http://localhost:${PORT}/register.html`);
-    console.log(`📋 Profile: http://localhost:${PORT}/profile.html`);
-    console.log(`✅ Health check: http://localhost:${PORT}/health`);
+    console.log(`📱 Test: http://localhost:${PORT}/report.html?code=IPAD001`);
 });
