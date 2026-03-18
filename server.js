@@ -52,6 +52,12 @@ const upload = multer({
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('✅ Uploads directory created');
+}
 // ===== HEALTH CHECK =====
 app.get('/', (req, res) => {
     res.send('🚀 HMA Lost and Found API is RUNNING!');
