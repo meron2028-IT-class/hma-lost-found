@@ -8,7 +8,7 @@ const db = new Database(dbPath);
 
 // Initialize tables
 function initialize() {
-    console.log('Initializing database...');
+    console.log('📊 Initializing database...');
     
     // Create tables
     db.exec(`
@@ -85,7 +85,7 @@ function initialize() {
     const studentCount = db.prepare('SELECT COUNT(*) as count FROM students').get().count;
     
     if (studentCount === 0) {
-        console.log('Adding sample data...');
+        console.log('📝 Adding sample data...');
         
         // Insert students
         const insertStudent = db.prepare('INSERT INTO students (name, email, grade) VALUES (?, ?, ?)');
@@ -104,6 +104,8 @@ function initialize() {
         
         console.log('✅ Sample data added!');
     }
+
+    console.log('✅ Database ready');
 }
 
 // ===== EXPORT FUNCTIONS =====

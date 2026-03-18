@@ -4,35 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - HMA Lost and Found</title>
-    <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
-        :root {
-            --hma-blue: #0A2647;
-            --hma-blue-light: #1E3A6F;
-            --hma-orange: #F97316;
-            --hma-orange-dark: #EA580C;
-            --gray-50: #F8FAFC;
-            --gray-200: #E2E8F0;
-            --gray-300: #CBD5E1;
-            --text-primary: #0F172A;
-            --text-secondary: #475569;
-            --text-tertiary: #64748B;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --hma-blue: #0A2647;
+            --hma-blue-light: #1E3A6F;
+            --hma-orange: #F97316;
+            --hma-orange-dark: #EA580C;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --text-tertiary: #64748B;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--gray-50);
             color: var(--text-primary);
+            min-height: 100vh;
         }
 
+        /* Navigation */
         .top-nav {
             background: white;
             padding: 15px 30px;
@@ -66,16 +70,17 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            font-size: 18px;
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 25px;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: var(--text-secondary);
+            color: var(--gray-600);
             font-weight: 500;
             transition: color 0.2s;
         }
@@ -119,14 +124,23 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            overflow: hidden;
         }
 
+        .avatar-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 30px;
         }
 
+        /* Profile Header */
         .profile-header {
             background: linear-gradient(135deg, var(--hma-blue), var(--hma-blue-light));
             color: white;
@@ -197,6 +211,7 @@
             color: var(--hma-blue);
         }
 
+        /* Section Card */
         .section-card {
             background: white;
             border-radius: 20px;
@@ -234,6 +249,7 @@
             box-shadow: 0 5px 15px rgba(249,115,22,0.3);
         }
 
+        /* Add Form */
         .add-form {
             background: var(--gray-50);
             border-radius: 15px;
@@ -258,6 +274,7 @@
             border: 2px solid var(--gray-200);
             border-radius: 10px;
             font-size: 16px;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-group input:focus,
@@ -281,6 +298,7 @@
             background: var(--hma-blue-light);
         }
 
+        /* Items Grid */
         .items-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -349,9 +367,10 @@
             background: var(--hma-blue-light);
         }
 
+        /* Loading */
         .loading {
             text-align: center;
-            padding: 50px;
+            padding: 60px;
         }
 
         .loading-spinner {
@@ -368,6 +387,7 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px;
@@ -393,12 +413,22 @@
             margin-bottom: 20px;
         }
 
-        .error-message {
-            color: #dc2626;
-            text-align: center;
-            padding: 20px;
+        .empty-state .btn-add {
+            display: inline-block;
+            text-decoration: none;
         }
 
+        /* Error */
+        .error-message {
+            background: #FEE2E2;
+            color: #991B1B;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -492,20 +522,29 @@
 
     <script>
         let currentUser = null;
+        let apiBase = window.location.origin;
+
+        console.log('🔍 Profile page loaded');
 
         async function checkAuth() {
+            console.log('🔐 Checking authentication...');
+            
             try {
                 const response = await fetch('/api/me');
+                console.log('📡 Auth response status:', response.status);
+                
                 if (!response.ok) {
+                    console.log('❌ Not authenticated, redirecting to login');
                     window.location.href = '/login.html';
                     return;
                 }
+                
                 currentUser = await response.json();
-                console.log('User loaded:', currentUser);
+                console.log('✅ User authenticated:', currentUser);
                 displayUserInfo();
                 loadUserItems();
             } catch (error) {
-                console.error('Auth error:', error);
+                console.error('❌ Auth error:', error);
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
                 document.getElementById('error').textContent = 'Error loading profile. Please try again.';
@@ -513,6 +552,7 @@
         }
 
         function displayUserInfo() {
+            console.log('👤 Displaying user info');
             document.getElementById('loading').style.display = 'none';
             document.getElementById('profileContent').style.display = 'block';
             
@@ -524,8 +564,9 @@
             document.getElementById('userDisplayName').textContent = currentUser.name.split(' ')[0];
             
             if (currentUser.photo_url) {
-                document.getElementById('profileAvatar').innerHTML = `<img src="${currentUser.photo_url}" alt="Profile">`;
-                document.getElementById('userAvatar').innerHTML = `<img src="${currentUser.photo_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">`;
+                console.log('📸 User has photo:', currentUser.photo_url);
+                document.getElementById('profileAvatar').innerHTML = `<img src="${currentUser.photo_url}" alt="Profile" onerror="console.log('❌ Failed to load profile image')">`;
+                document.getElementById('userAvatar').innerHTML = `<img src="${currentUser.photo_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="console.log('❌ Failed to load avatar')">`;
             }
             
             // Update navigation
@@ -535,13 +576,17 @@
         }
 
         async function loadUserItems() {
+            console.log('📦 Loading user items...');
+            
             try {
                 const response = await fetch('/api/user-items');
+                console.log('📡 Items response status:', response.status);
+                
                 const items = await response.json();
-                console.log('Items loaded:', items);
+                console.log(`✅ Found ${items.length} items:`, items);
                 displayItems(items);
             } catch (error) {
-                console.error('Error loading items:', error);
+                console.error('❌ Error loading items:', error);
                 document.getElementById('itemsList').innerHTML = '<div class="error-message">Failed to load items</div>';
             }
         }
@@ -555,6 +600,7 @@
                         <div class="icon">📦</div>
                         <h3>No items yet</h3>
                         <p>Click "Add New Item" to create your first QR code!</p>
+                        <button class="btn-add" onclick="document.getElementById('showAddForm').click()">Add Your First Item</button>
                     </div>
                 `;
                 return;
@@ -573,17 +619,22 @@
             // Generate QR codes for each item
             items.forEach(item => {
                 const baseUrl = window.location.origin;
-                QRCode.toDataURL(`${baseUrl}/report.html?code=${item.item_code}`, {
+                const qrUrl = `${baseUrl}/report.html?code=${item.item_code}`;
+                console.log(`🔗 Generating QR for: ${qrUrl}`);
+                
+                QRCode.toDataURL(qrUrl, {
                     width: 150,
                     margin: 1
                 }, (err, url) => {
-                    if (!err) {
-                        const qrDiv = document.getElementById(`qr-${item.item_code}`);
-                        if (qrDiv) {
-                            qrDiv.innerHTML = `<img src="${url}" alt="QR Code for ${item.item_name}" style="width:150px;height:150px;">`;
-                        }
-                    } else {
-                        console.error('QR generation error:', err);
+                    if (err) {
+                        console.error('❌ QR generation error for', item.item_code, err);
+                        return;
+                    }
+                    
+                    const qrDiv = document.getElementById(`qr-${item.item_code}`);
+                    if (qrDiv) {
+                        qrDiv.innerHTML = `<img src="${url}" alt="QR Code for ${item.item_name}" style="width:150px;height:150px;">`;
+                        console.log(`✅ QR generated for ${item.item_code}`);
                     }
                 });
             });
@@ -596,11 +647,13 @@
                 link.href = qrImg.src;
                 link.download = `qr-${name}-${code}.png`;
                 link.click();
+                console.log(`📥 Downloaded QR for ${code}`);
             }
         };
 
         // Toggle add item form
         document.getElementById('showAddForm').addEventListener('click', () => {
+            console.log('➕ Toggling add form');
             document.getElementById('addItemForm').classList.toggle('active');
         });
 
@@ -619,6 +672,8 @@
                 description: formData.get('description') || ''
             };
 
+            console.log('📤 Adding item:', data);
+
             try {
                 const response = await fetch('/api/user-items', {
                     method: 'POST',
@@ -627,8 +682,10 @@
                 });
 
                 const result = await response.json();
+                console.log('📥 Add item response:', result);
                 
                 if (result.success) {
+                    console.log('✅ Item added successfully');
                     document.getElementById('addItemForm').classList.remove('active');
                     document.getElementById('itemForm').reset();
                     loadUserItems();
@@ -636,6 +693,7 @@
                     alert('Error: ' + (result.error || 'Failed to add item'));
                 }
             } catch (error) {
+                console.error('❌ Error adding item:', error);
                 alert('Error adding item: ' + error.message);
             } finally {
                 btn.textContent = originalText;
@@ -645,11 +703,13 @@
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
+            console.log('🚪 Logging out');
             await fetch('/api/logout', { method: 'POST' });
             window.location.href = '/';
         });
 
         // Initialize
+        console.log('🚀 Starting profile page');
         checkAuth();
     </script>
 </body>
