@@ -18,18 +18,26 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Session middleware
+// ===== SESSION MIDDLEWARE - FIXED FOR RAILWAY =====
 app.use(session({
-    secret: 'hma-secret-key',
-    resave: false,
-    saveUninitialized: false,
+    secret: 'hma-secret-key-2026',
+    resave: true,  // Changed from false to true
+    saveUninitialized: true,  // Changed from false to true
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24,
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true
-    }
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+        secure: false, // Set to false for Railway (no HTTPS locally)
+        httpOnly: true,
+        sameSite: 'lax'
+    },
+    name: 'hma.sid' // Custom name to avoid conflicts
 }));
+
+// Add this middleware to log session
+app.use((req, res, next) => {
+    console.log('🍪 Session ID:', req.sessionID);
+    console.log('👤 Session user:', req.session?.userId);
+    next();
+});
 
 // ===== UPLOADS DIRECTORY SETUP =====
 const uploadsDir = path.join(__dirname, 'uploads');
