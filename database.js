@@ -2,7 +2,7 @@ const Database = require('better-sqlite3');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure database directory exists
+// Create database connection
 const dbPath = path.join(__dirname, 'hma.db');
 const db = new Database(dbPath);
 
@@ -106,7 +106,9 @@ function initialize() {
     }
 }
 
-// Get item by code (works with both tables)
+// ===== EXPORT FUNCTIONS =====
+
+// Get item by code
 function getItemByCode(code) {
     // Try items table first
     let item = db.prepare(`
@@ -224,7 +226,7 @@ function getStats() {
     };
 }
 
-// Export all functions
+// Export everything
 module.exports = {
     initialize,
     getItemByCode,
@@ -238,5 +240,5 @@ module.exports = {
     getUserItems,
     addUserItem,
     getStats,
-    db // Export db for server.js to use
+    db
 };

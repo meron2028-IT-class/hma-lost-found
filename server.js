@@ -9,7 +9,7 @@ const db = require('./database');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 8080;  // THIS IS THE IMPORTANT LINE - USE 3000!
+const PORT = process.env.PORT || 8080;
 
 // ===== MIDDLEWARE =====
 app.use(cors());
@@ -29,15 +29,6 @@ app.use(session({
     }
 }));
 
-// SIMPLE TEST ROUTE - ADD THIS!
-app.get('/', (req, res) => {
-    res.send('🚀 HMA Lost and Found API is RUNNING!');
-});
-
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok', time: new Date().toISOString() });
-});
-
 // ===== MULTER CONFIGURATION =====
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -49,8 +40,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, 'photo-' + uniqueSuffix + ext);
+        cb(null, 'photo-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
@@ -62,9 +52,9 @@ const upload = multer({
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ===== HEALTH CHECK - THIS IS IMPORTANT FOR RAILWAY =====
+// ===== HEALTH CHECK =====
 app.get('/', (req, res) => {
-    res.send('HMA Lost and Found API is running!');
+    res.send('🚀 HMA Lost and Found API is RUNNING!');
 });
 
 app.get('/health', (req, res) => {
@@ -89,26 +79,28 @@ app.post('/api/register', upload.single('photo'), async (req, res) => {
         const { name, email, password, gender, grade } = req.body;
         const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
 
-        const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+        // Check if user exists
+        const existing = db.getUserByEmail(email);
         if (existing) {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
+        // Hash password
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(password, saltRounds);
 
-        const stmt = db.prepare(`
-            INSERT INTO users (name, email, password_hash, gender, grade, photo_url)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `);
-        const result = stmt.run(name, email, password_hash, gender, grade, photo_url);
+        // Create user
+        const userId = db.createUser({
+            name, email, password_hash, gender, grade, photo_url
+        });
 
-        req.session.userId = result.lastInsertRowid;
+        // Set session
+        req.session.userId = userId;
         req.session.userEmail = email;
 
         res.json({ 
             success: true, 
-            userId: result.lastInsertRowid,
+            userId,
             message: 'Registration successful' 
         });
 
@@ -160,12 +152,7 @@ app.get('/api/me', (req, res) => {
         return res.status(401).json({ error: 'Not logged in' });
     }
 
-    const user = db.prepare(`
-        SELECT id, name, email, gender, grade, photo_url 
-        FROM users 
-        WHERE id = ?
-    `).get(req.session.userId);
-
+    const user = db.getUserById(req.session.userId);
     res.json(user);
 });
 
@@ -180,24 +167,28 @@ app.post('/api/user-items', express.json(), async (req, res) => {
     try {
         const { item_name, description } = req.body;
         
+        // Generate unique code
         const timestamp = Date.now().toString(36);
         const random = Math.random().toString(36).substring(2, 8).toUpperCase();
         const item_code = `U${timestamp}${random}`;
 
+        // Generate QR code as data URL
         const baseUrl = process.env.BASE_URL || 'https://hma-lost-found-production.up.railway.app';
         const qrDataUrl = await QRCode.toDataURL(`${baseUrl}/report.html?code=${item_code}`);
 
-        const stmt = db.prepare(`
-            INSERT INTO user_items (user_id, item_name, description, item_code, qr_code_path)
-            VALUES (?, ?, ?, ?, ?)
-        `);
-        const result = stmt.run(req.session.userId, item_name, description, item_code, null);
+        // Save to database
+        const itemId = db.addUserItem({
+            user_id: req.session.userId,
+            item_name,
+            description,
+            item_code
+        });
 
         res.json({ 
             success: true, 
             item_code,
             qrDataUrl,
-            id: result.lastInsertRowid 
+            id: itemId 
         });
 
     } catch (error) {
@@ -213,12 +204,7 @@ app.get('/api/user-items', (req, res) => {
     }
 
     try {
-        const items = db.prepare(`
-            SELECT * FROM user_items 
-            WHERE user_id = ? 
-            ORDER BY created_at DESC
-        `).all(req.session.userId);
-
+        const items = db.getUserItems(req.session.userId);
         res.json(items);
 
     } catch (error) {
@@ -233,31 +219,7 @@ app.get('/api/item/:code', (req, res) => {
     const { code } = req.params;
 
     try {
-        let item = db.prepare(`
-            SELECT 
-                items.item_code, 
-                items.item_name, 
-                items.description,
-                students.name AS owner_name, 
-                students.email AS owner_email
-            FROM items 
-            JOIN students ON items.student_id = students.id
-            WHERE items.item_code = ?
-        `).get(code);
-
-        if (!item) {
-            item = db.prepare(`
-                SELECT 
-                    ui.item_code, 
-                    ui.item_name, 
-                    ui.description,
-                    u.name AS owner_name, 
-                    u.email AS owner_email
-                FROM user_items ui
-                JOIN users u ON ui.user_id = u.id
-                WHERE ui.item_code = ?
-            `).get(code);
-        }
+        const item = db.getItemByCode(code);
 
         if (!item) {
             return res.status(404).json({ error: 'Item not found' });
@@ -279,20 +241,16 @@ app.post('/api/report', upload.single('photo'), (req, res) => {
     const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
 
     try {
-        const stmt = db.prepare(`
-            INSERT INTO reports (item_code, location, finder_name, finder_email, notes, photo_url)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `);
-        const result = stmt.run(
-            item_code, 
-            location, 
-            finder_name || 'Anonymous', 
-            finder_email || '', 
-            notes || '', 
+        const reportId = db.addReport({
+            item_code,
+            location,
+            finder_name: finder_name || 'Anonymous',
+            finder_email: finder_email || '',
+            notes: notes || '',
             photo_url
-        );
+        });
 
-        res.json({ success: true, reportId: result.lastInsertRowid });
+        res.json({ success: true, reportId });
 
     } catch (error) {
         console.error('Report error:', error);
@@ -303,15 +261,7 @@ app.post('/api/report', upload.single('photo'), (req, res) => {
 // Get recent QR reports
 app.get('/api/recent-qr', (req, res) => {
     try {
-        const reports = db.prepare(`
-            SELECT reports.*, items.item_name, students.name AS owner_name
-            FROM reports
-            JOIN items ON reports.item_code = items.item_code
-            JOIN students ON items.student_id = students.id
-            ORDER BY reports.timestamp DESC
-            LIMIT 20
-        `).all();
-
+        const reports = db.getRecentReports(20);
         res.json(reports);
 
     } catch (error) {
@@ -328,13 +278,13 @@ app.post('/api/unknown', upload.single('photo'), (req, res) => {
     const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
 
     try {
-        const stmt = db.prepare(`
-            INSERT INTO unknown_items (location, notes, photo_url)
-            VALUES (?, ?, ?)
-        `);
-        const result = stmt.run(location || '', notes || '', photo_url);
+        const id = db.addUnknownItem({
+            location: location || '',
+            notes: notes || '',
+            photo_url
+        });
 
-        res.json({ success: true, id: result.lastInsertRowid });
+        res.json({ success: true, id });
 
     } catch (error) {
         console.error('Unknown item error:', error);
@@ -345,11 +295,7 @@ app.post('/api/unknown', upload.single('photo'), (req, res) => {
 // Get unknown items
 app.get('/api/unknown', (req, res) => {
     try {
-        const items = db.prepare(`
-            SELECT * FROM unknown_items 
-            ORDER BY timestamp DESC
-        `).all();
-
+        const items = db.getUnknownItems();
         res.json(items);
 
     } catch (error) {
@@ -362,12 +308,7 @@ app.get('/api/unknown', (req, res) => {
 
 app.get('/api/stats', (req, res) => {
     try {
-        const stats = {
-            totalItems: db.prepare('SELECT COUNT(*) as count FROM items').get().count,
-            totalReports: db.prepare('SELECT COUNT(*) as count FROM reports').get().count,
-            totalUsers: db.prepare('SELECT COUNT(*) as count FROM users').get().count || 0,
-            totalUnknown: db.prepare('SELECT COUNT(*) as count FROM unknown_items').get().count
-        };
+        const stats = db.getStats();
         res.json(stats);
 
     } catch (error) {
@@ -376,7 +317,10 @@ app.get('/api/stats', (req, res) => {
     }
 });
 
+// ===== START SERVER =====
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`\n🚀 Server running on port ${PORT}`);
     console.log(`📱 Test: http://localhost:${PORT}/report.html?code=IPAD001`);
+    console.log(`👤 Register: http://localhost:${PORT}/register.html`);
+    console.log(`📋 Profile: http://localhost:${PORT}/profile.html`);
 });
