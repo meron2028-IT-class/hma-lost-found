@@ -9,7 +9,7 @@ const db = require('./database');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 3000;  // THIS IS THE IMPORTANT LINE - USE 3000!
+const PORT = process.env.PORT || 8080;  // THIS IS THE IMPORTANT LINE - USE 3000!
 
 // ===== MIDDLEWARE =====
 app.use(cors());
