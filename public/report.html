@@ -394,106 +394,111 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        emailjs.init('bRVHUE9wFV4psMnIu');
+<script>
+    // Initialize EmailJS with your public key
+    emailjs.init('bRVHUE9wFV4psMnIu');
+    console.log('✅ EmailJS initialized');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
 
-        const loadingDiv = document.getElementById('loading-state');
-        const errorDiv = document.getElementById('error-message');
-        const form = document.getElementById('reportForm');
+    const loadingDiv = document.getElementById('loading-state');
+    const errorDiv = document.getElementById('error-message');
+    const form = document.getElementById('reportForm');
 
-        if (!code) {
-            loadingDiv.style.display = 'none';
-            errorDiv.style.display = 'block';
-            errorDiv.innerHTML = '❌ No QR code detected. Please scan a valid QRcovery code.';
-        } else {
-            fetch(`/api/item/${code}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Item not found');
-                    return response.json();
-                })
-                .then(item => {
-                    document.getElementById('item_code').value = code;
-                    document.getElementById('item_name').value = `${item.item_name}${item.description ? ' - ' + item.description : ''}`;
-                    document.getElementById('owner_name').value = item.owner_name || '';
-                    document.getElementById('owner_email').value = item.owner_email || '';
+    if (!code) {
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = '❌ No QR code detected. Please scan a valid QRcovery code.';
+    } else {
+        fetch(`/api/item/${code}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Item not found');
+                return response.json();
+            })
+            .then(item => {
+                document.getElementById('item_code').value = code;
+                document.getElementById('item_name').value = `${item.item_name}${item.description ? ' - ' + item.description : ''}`;
+                document.getElementById('owner_name').value = item.owner_name || '';
+                document.getElementById('owner_email').value = item.owner_email || '';
 
-                    loadingDiv.style.display = 'none';
-                    form.style.display = 'block';
-                })
-                .catch(err => {
-                    loadingDiv.style.display = 'none';
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = `❌ Item not found. Code: ${code} is not registered in QRcovery.`;
-                });
+                loadingDiv.style.display = 'none';
+                form.style.display = 'block';
+            })
+            .catch(err => {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                errorDiv.innerHTML = `❌ Item not found. Code: ${code} is not registered in QRcovery.`;
+            });
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = 'Sending <span class="loading"></span>';
+        btn.disabled = true;
+
+        const ownerEmail = document.getElementById('owner_email').value;
+        const location = document.getElementById('location').value;
+        const notes = document.getElementById('notes').value;
+        const finderName = document.getElementById('finder_name').value || 'Anonymous';
+        const finderEmail = document.getElementById('finder_email').value || 'Not provided';
+        const photoFile = document.getElementById('photo').files[0];
+
+        // Simple template params WITHOUT photo attachment first (to test)
+        const templateParams = {
+            to_email: ownerEmail,
+            from_name: 'QRcovery',
+            location: location,
+            notes: notes,
+            finder_name: finderName,
+            finder_email: finderEmail
+        };
+
+        console.log('📧 Sending email to:', ownerEmail);
+        console.log('📧 Using Service ID: service_ym11glb');
+        console.log('📧 Using Template ID: template_mgg9tjx');
+        console.log('📧 Template params:', templateParams);
+
+        try {
+            // Send email
+            const response = await emailjs.send('service_ym11glb', 'template_mgg9tjx', templateParams);
+            console.log('✅ Email sent successfully:', response);
+            
+            // Save report to database
+            const formData = new FormData();
+            formData.append('item_code', code);
+            formData.append('location', location);
+            formData.append('finder_name', finderName);
+            formData.append('finder_email', finderEmail);
+            formData.append('notes', notes);
+            if (photoFile) formData.append('photo', photoFile);
+
+            await fetch('/api/report', { method: 'POST', body: formData });
+            
+            const successDiv = document.createElement('div');
+            successDiv.className = 'message success';
+            successDiv.innerHTML = '✅ Notification sent! Redirecting to Discover...';
+            form.parentNode.insertBefore(successDiv, form);
+            form.style.display = 'none';
+            
+            setTimeout(() => { window.location.href = '/discover.html'; }, 2000);
+            
+        } catch (err) {
+            console.error('❌ Email error details:', err);
+            console.error('❌ Error status:', err.status);
+            console.error('❌ Error text:', err.text);
+            
+            btn.innerHTML = 'Send Notification to Owner';
+            btn.disabled = false;
+            
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'message error';
+            errorMsg.innerHTML = `❌ Failed to send email: ${err.text || 'Please check EmailJS configuration'}`;
+            form.parentNode.insertBefore(errorMsg, form);
+            setTimeout(() => errorMsg.remove(), 5000);
         }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = 'Sending <span class="loading"></span>';
-            btn.disabled = true;
-
-            const ownerEmail = document.getElementById('owner_email').value;
-            const location = document.getElementById('location').value;
-            const notes = document.getElementById('notes').value;
-            const finderName = document.getElementById('finder_name').value || 'Anonymous';
-            const finderEmail = document.getElementById('finder_email').value || 'Not provided';
-            const photoFile = document.getElementById('photo').files[0];
-
-            let base64Photo = '';
-            if (photoFile) {
-                const reader = new FileReader();
-                const data = await new Promise((resolve) => {
-                    reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-                    reader.readAsDataURL(photoFile);
-                });
-                base64Photo = data;
-            }
-
-            const templateParams = {
-                to_email: ownerEmail,
-                from_name: 'QRcovery',
-                location: location,
-                notes: notes,
-                finder_name: finderName,
-                finder_email: finderEmail,
-                photo: base64Photo,
-                filename: photoFile ? photoFile.name : ''
-            };
-
-            try {
-                await emailjs.send('service_ym11glb', 'template_mgg9tjx', templateParams);
-                
-                const formData = new FormData();
-                formData.append('item_code', code);
-                formData.append('location', location);
-                formData.append('finder_name', finderName);
-                formData.append('finder_email', finderEmail);
-                formData.append('notes', notes);
-                if (photoFile) formData.append('photo', photoFile);
-
-                await fetch('/api/report', { method: 'POST', body: formData });
-                
-                const successDiv = document.createElement('div');
-                successDiv.className = 'message success';
-                successDiv.innerHTML = '✅ Notification sent! Redirecting to Discover...';
-                form.parentNode.insertBefore(successDiv, form);
-                form.style.display = 'none';
-                
-                setTimeout(() => { window.location.href = '/discover.html'; }, 2000);
-            } catch (err) {
-                btn.innerHTML = 'Send Notification to Owner';
-                btn.disabled = false;
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'message error';
-                errorMsg.innerHTML = '❌ Failed to send email. Please try again.';
-                form.parentNode.insertBefore(errorMsg, form);
-                setTimeout(() => errorMsg.remove(), 3000);
-            }
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
