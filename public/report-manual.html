@@ -3,62 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Unknown Item – HMA Smart‑Find</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Report Item - QRcovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #d4af37;
+            --gold-dark: #b38f00;
+            --bg-page: #f8f9fb;
+            --bg-card: #ffffff;
+            --text-primary: #1a1f36;
+            --text-secondary: #5a6e8a;
+            --text-tertiary: #8a99b0;
+            --border: #e9edf2;
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.03);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .navbar {
+            background: var(--bg-card);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .auth-link {
+            background: var(--gold);
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+
+        .form-container {
+            max-width: 550px;
+            margin: 48px auto;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 36px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: var(--gold-dark);
+            transform: translateY(-1px);
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            background: #10b98120;
+            color: #10b981;
+            border: 1px solid #10b98130;
+            display: block;
+        }
+
+        .message.error {
+            background: #ef444420;
+            color: #dc2626;
+            border: 1px solid #ef444430;
+            display: block;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .footer p {
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .navbar .container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+            .form-container {
+                margin: 24px;
+                padding: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav class="top-nav">
-        <div class="logo-area">
-            <div class="logo-placeholder">HMA</div>
-            <span>Smart‑Find</span>
-        </div>
-      <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/discover.html">Discover</a>
-    <a href="/report.html">Scan QR</a>
-    <a href="/report-manual.html">Report Item</a>
-    <a href="/test-codes.html">Test Codes</a>
-    <a href="/register.html" class="auth-link">Register</a>
-    <a href="/login.html" class="auth-link">Login</a>
-    <a href="/profile.html" class="auth-link profile-link" style="display:none;">Profile</a>
-</div>
-        <div class="user-info">
-            <span>Guest</span>
-            <div class="avatar-placeholder">👤</div>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">QR</div>
+                <div class="logo-text"><span>QR</span>covery</div>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/report.html">Scan QR</a>
+                <a href="/report-manual.html" class="active">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+                <a href="/register.html" class="auth-link">Register</a>
+                <a href="/login.html" class="auth-link">Login</a>
+            </div>
         </div>
     </nav>
 
-    <main class="container">
-        <h1 style="margin-bottom: 30px;">Report Found Item (No QR)</h1>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Report Found Item</h1>
+                <p>No QR code? No problem. Post it here for others to see.</p>
+            </div>
 
-        <form id="manual-report-form" class="report-form" enctype="multipart/form-data">
-            <label>Location</label>
-            <select id="location" name="location" required>
-                <option value="Grade 9 girls dorm">Grade 9 girls dorm</option>
-<option value="Grade 9 boys dorm">Grade 9 boys dorm</option>
-<option value="Grade 10 girls dorm">Grade 10 girls dorm</option>
-<option value="Grade 10 boys dorm">Grade 10 boys dorm</option>
-<option value="Cafeteria">Cafeteria</option>
-<option value="Library">Library</option>
-<option value="HMA room">HMA room</option>
-<option value="Math classrooms">Math classrooms</option>
-<option value="English classrooms">English classrooms</option>
-<option value="Design classrooms">Design classrooms</option>
-<option value="History classrooms">History classrooms</option>
-<option value="CC class">CC class</option>
-            </select>
+            <div id="message" class="message"></div>
 
-            <label>Photo of the item</label>
-            <input type="file" id="photo" name="photo" accept="image/*" capture="environment" required>
+            <form id="reportForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Where did you find it?</label>
+                    <select id="location" name="location" required>
+                        <option value="">Select location</option>
+                        <option value="Library">📚 Library</option>
+                        <option value="Gym">💪 Gym</option>
+                        <option value="Cafeteria">🍽️ Cafeteria</option>
+                        <option value="Computer Lab">💻 Computer Lab</option>
+                        <option value="Grade 9 girls dorm">🏠 Grade 9 Girls Dorm</option>
+                        <option value="Grade 9 boys dorm">🏠 Grade 9 Boys Dorm</option>
+                        <option value="Grade 10 girls dorm">🏠 Grade 10 Girls Dorm</option>
+                        <option value="Grade 10 boys dorm">🏠 Grade 10 Boys Dorm</option>
+                        <option value="Math classrooms">📐 Math Classrooms</option>
+                        <option value="English classrooms">📖 English Classrooms</option>
+                        <option value="Design classrooms">🎨 Design Classrooms</option>
+                        <option value="History classrooms">🏛️ History Classrooms</option>
+                        <option value="CC class">📝 CC Class</option>
+                    </select>
+                </div>
 
-            <label>Additional Notes</label>
-            <textarea id="notes" name="notes" rows="3" placeholder="Describe the item (e.g., blue water bottle)"></textarea>
+                <div class="form-group">
+                    <label>Photo of the item</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" capture="environment" required>
+                </div>
 
-            <button type="submit">Post to Discover</button>
-        </form>
-    </main>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Describe the item (color, brand, etc.)"></textarea>
+                </div>
 
-    <script src="/js/report-manual.js"></script>
+                <button type="submit" class="btn-submit">Post to Discover</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 QRcovery — Developed by the ICT CTL Team of Haile-Manas Academy</p>
+            <p style="margin-top: 8px; font-size: 12px;">Scan. Connect. Recover.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = 'Posting...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = 'message';
+            messageDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/unknown', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    messageDiv.className = 'message success';
+                    messageDiv.innerHTML = '✅ Item posted to Discover! Redirecting...';
+                    messageDiv.style.display = 'block';
+                    setTimeout(() => { window.location.href = '/discover.html'; }, 2000);
+                } else {
+                    throw new Error('Failed to post');
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.innerHTML = '❌ Failed to post item. Please try again.';
+                messageDiv.style.display = 'block';
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

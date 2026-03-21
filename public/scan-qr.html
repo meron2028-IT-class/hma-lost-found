@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QR - QRcovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #d4af37;
+            --gold-dark: #b38f00;
+            --bg-page: #f8f9fb;
+            --bg-card: #ffffff;
+            --text-primary: #1a1f36;
+            --text-secondary: #5a6e8a;
+            --border: #e9edf2;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .navbar {
+            background: var(--bg-card);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .auth-link {
+            background: var(--gold);
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+
+        .scanner-container {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 40px;
+            margin: 48px 0;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .scanner-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+
+        .scanner-container h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .scanner-container p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .qr-input {
+            display: flex;
+            gap: 12px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .qr-input input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            font-size: 14px;
+        }
+
+        .qr-input button {
+            padding: 14px 24px;
+            background: var(--gold);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .navbar .container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+            .scanner-container {
+                padding: 28px;
+            }
+            .qr-input {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">QR</div>
+                <div class="logo-text"><span>QR</span>covery</div>
+            </div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/report.html">Scan QR</a>
+                <a href="/report-manual.html">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+                <a href="/register.html" class="auth-link">Register</a>
+                <a href="/login.html" class="auth-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="scanner-container">
+            <div class="scanner-icon">📷</div>
+            <h1>Scan QR Code</h1>
+            <p>Point your camera at any QRcovery code on campus items</p>
+            <p style="font-size: 14px;">📱 On mobile, use your camera app to scan</p>
+            <p style="font-size: 14px;">💻 On computer, enter the code below or use test codes</p>
+            
+            <div class="qr-input">
+                <input type="text" id="qrCodeInput" placeholder="Enter QR code (e.g., IPAD001)">
+                <button onclick="scanCode()">Check Item</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 QRcovery — Developed by the ICT CTL Team of Haile-Manas Academy</p>
+            <p style="margin-top: 8px; font-size: 12px;">Scan. Connect. Recover.</p>
+        </div>
+    </footer>
+
+    <script>
+        function scanCode() {
+            const code = document.getElementById('qrCodeInput').value.trim().toUpperCase();
+            if (code) {
+                window.location.href = `/report.html?code=${code}`;
+            } else {
+                alert('Please enter a QR code');
+            }
+        }
+
+        document.getElementById('qrCodeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                scanCode();
+            }
+        });
+    </script>
+</body>
+</html>

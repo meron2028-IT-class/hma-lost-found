@@ -3,299 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Codes – HMA Lost and Found</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Test Codes - QRcovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* Test page specific overrides */
-        .product-price {
-            display: none; /* Remove prices */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .product-card {
-            padding-bottom: var(--space-4);
+
+        :root {
+            --gold: #d4af37;
+            --gold-dark: #b38f00;
+            --bg-page: #f8f9fb;
+            --bg-card: #ffffff;
+            --text-primary: #1a1f36;
+            --text-secondary: #5a6e8a;
+            --text-tertiary: #8a99b0;
+            --border: #e9edf2;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.02);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.03);
+            --radius: 16px;
+            --radius-sm: 10px;
         }
-        
-        .debug-section {
-            background: var(--bg-secondary);
-            border: var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: var(--space-6);
-            margin-top: var(--space-8);
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
         }
-        
-        .debug-log {
-            background: var(--bg-primary);
-            border-radius: var(--radius-md);
-            padding: var(--space-4);
-            font-family: monospace;
-            font-size: var(--text-sm);
-            border: var(--border-light);
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
-        
-        .debug-time {
-            color: var(--hma-orange);
-            margin-right: var(--space-3);
+
+        .navbar {
+            background: var(--bg-card);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        .category-tabs {
+
+        .navbar .container {
             display: flex;
-            gap: var(--space-6);
-            margin: var(--space-6) 0;
-            border-bottom: var(--border-light);
-            padding-bottom: var(--space-3);
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
         }
-        
-        .category-tab {
-            color: var(--text-tertiary);
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .auth-link {
+            background: var(--gold);
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: white;
+            padding: 48px;
+            border-radius: var(--radius);
+            margin: 32px 0;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .test-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--gold);
+        }
+
+        .test-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .test-card .code {
+            font-family: monospace;
+            background: var(--bg-page);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            margin: 12px 0;
+            font-size: 14px;
+            color: var(--gold-dark);
+        }
+
+        .test-card .owner {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .btn-test {
+            display: inline-block;
+            background: var(--gold);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-test:hover {
+            background: var(--gold-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-copy {
+            background: var(--bg-page);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 40px;
             cursor: pointer;
-            padding-bottom: var(--space-3);
-            margin-bottom: -3px;
-            border-bottom: 2px solid transparent;
+            font-size: 14px;
+            transition: all 0.2s;
         }
-        
-        .category-tab.active {
-            color: var(--hma-orange);
-            border-bottom-color: var(--hma-orange);
+
+        .btn-copy:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .debug-section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 32px 0;
+            border: 1px solid var(--border);
+        }
+
+        .debug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .debug-header h3 {
+            font-size: 18px;
+        }
+
+        .debug-log {
+            background: #1e293b;
+            color: #a5f3fc;
+            font-family: monospace;
+            font-size: 13px;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-log div {
+            padding: 4px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .debug-time {
+            color: var(--gold);
+            margin-right: 12px;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        .footer p {
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .navbar .container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+            .page-header {
+                padding: 32px 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="top-nav">
-        <div class="nav-container">
-            <div class="flex-center">
-                <img src="/assets/hma-logo.png" alt="HMA" style="height: 40px; margin-right: var(--space-3);">
-                <span style="font-weight: 600; color: var(--hma-blue);">Lost and Found</span>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">QR</div>
+                <div class="logo-text"><span>QR</span>covery</div>
             </div>
             <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/discover.html">Discover</a>
-    <a href="/report.html">Scan QR</a>
-    <a href="/report-manual.html">Report Item</a>
-    <a href="/test-codes.html">Test Codes</a>
-    <a href="/register.html" class="auth-link">Register</a>
-    <a href="/login.html" class="auth-link">Login</a>
-    <a href="/profile.html" class="auth-link profile-link" style="display:none;">Profile</a>
-</div>
-            <div class="flex-center">
-                <span class="text-small" style="margin-right: var(--space-3);">ICT CTL Team</span>
-                <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 18px;">🔧</div>
+                <a href="/">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/report.html">Scan QR</a>
+                <a href="/report-manual.html">Report Item</a>
+                <a href="/test-codes.html" class="active">Test Codes</a>
+                <a href="/register.html" class="auth-link">Register</a>
+                <a href="/login.html" class="auth-link">Login</a>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Hero Section -->
-        <div class="profile-header" style="margin-top: var(--space-6);">
-            <div class="profile-avatar">🧪</div>
-            <div class="profile-info">
-                <h1>Test QR Codes</h1>
-                <p>System diagnostics and QR code testing interface for ICT CTL Team</p>
-            </div>
+        <div class="page-header">
+            <h1>Test QR Codes</h1>
+            <p>System diagnostics and testing interface for ICT CTL Team</p>
         </div>
 
-        <!-- Category Tabs -->
-        <div class="category-tabs" id="categoryTabs">
-            <span class="category-tab active" data-category="all">All Codes</span>
-            <span class="category-tab" data-category="ipad">iPad</span>
-            <span class="category-tab" data-category="airpods">AirPods</span>
-            <span class="category-tab" data-category="macbook">MacBook</span>
-            <span class="category-tab" data-category="accessories">Accessories</span>
-        </div>
+        <div class="test-grid" id="testGrid"></div>
 
-        <!-- QR Codes Grid -->
-        <div class="product-grid" id="qr-codes-grid">
-            <!-- IPAD001 -->
-            <div class="product-card" data-category="ipad">
-                <div class="product-image">📱</div>
-                <div class="product-code">IPAD001</div>
-                <div class="product-name">iPad Pro 12.9"</div>
-                <div class="product-owner">Jovani Tewodros</div>
-                <div class="product-email">jovanitewodros72@gmail.com</div>
-                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
-                    <a href="/report.html?code=IPAD001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
-                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('IPAD001')">📋</button>
-                </div>
-            </div>
-
-            <!-- AIRP001 -->
-            <div class="product-card" data-category="airpods">
-                <div class="product-image">🎧</div>
-                <div class="product-code">AIRP001</div>
-                <div class="product-name">AirPods Pro</div>
-                <div class="product-owner">Jovani Tewodros</div>
-                <div class="product-email">jovanitewodros72@gmail.com</div>
-                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
-                    <a href="/report.html?code=AIRP001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
-                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('AIRP001')">📋</button>
-                </div>
-            </div>
-
-            <!-- IPAD002 -->
-            <div class="product-card" data-category="ipad">
-                <div class="product-image">📱</div>
-                <div class="product-code">IPAD002</div>
-                <div class="product-name">iPad Air</div>
-                <div class="product-owner">Meron Shitaye</div>
-                <div class="product-email">meri.shitaye@gmail.com</div>
-                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
-                    <a href="/report.html?code=IPAD002" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
-                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('IPAD002')">📋</button>
-                </div>
-            </div>
-
-            <!-- PEN001 -->
-            <div class="product-card" data-category="accessories">
-                <div class="product-image">✏️</div>
-                <div class="product-code">PEN001</div>
-                <div class="product-name">Apple Pencil</div>
-                <div class="product-owner">Meron Shitaye</div>
-                <div class="product-email">meri.shitaye@gmail.com</div>
-                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
-                    <a href="/report.html?code=PEN001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
-                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('PEN001')">📋</button>
-                </div>
-            </div>
-
-            <!-- MAC001 -->
-            <div class="product-card" data-category="macbook">
-                <div class="product-image">💻</div>
-                <div class="product-code">MAC001</div>
-                <div class="product-name">MacBook Air</div>
-                <div class="product-owner">Meron Shitaye</div>
-                <div class="product-email">meron2028@hmacademy.org</div>
-                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
-                    <a href="/report.html?code=MAC001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
-                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('MAC001')">📋</button>
-                </div>
-            </div>
-
-            <!-- CALC001 -->
-            <div class="product-card" data-category="accessories">
-                <div class="product-image">🧮</div>
-                <div class="product-code">CALC001</div>
-                <div class="product-name">TI-84 Calculator</div>
-                <div class="product-owner">Meron Shitaye</div>
-                <div class="product-email">meron2028@hmacademy.org</div>
-                <div class="product-actions flex" style="gap: var(--space-2); margin-top: var(--space-3);">
-                    <a href="/report.html?code=CALC001" class="btn btn-primary btn-sm" style="flex: 1;" target="_blank">Test Scan</a>
-                    <button class="btn btn-secondary btn-sm" style="width: 45px;" onclick="copyCode('CALC001')">📋</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Test Categories -->
-        <div style="margin-top: var(--space-8);">
-            <div class="section-title">
-                <h3>Test Categories</h3>
-                <a href="#" onclick="runAllTests(); return false;">Run All →</a>
-            </div>
-            
-            <div class="grid-3">
-                <div class="section-card">
-                    <div style="font-size: 32px; margin-bottom: var(--space-3);">📷</div>
-                    <h4>QR Scanner</h4>
-                    <p class="text-small">Test camera and QR code detection</p>
-                    <a href="/scan-qr.html" class="btn btn-secondary btn-sm" style="margin-top: var(--space-3);">Test Scanner →</a>
-                </div>
-                <div class="section-card">
-                    <div style="font-size: 32px; margin-bottom: var(--space-3);">🧪</div>
-                    <h4>Test Suite</h4>
-                    <p class="text-small">Run comprehensive system tests</p>
-                    <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-3);" onclick="runTestSuite(); return false;">Run Suite →</button>
-                </div>
-                <div class="section-card">
-                    <div style="font-size: 32px; margin-bottom: var(--space-3);">🔧</div>
-                    <h4>Debug Tools</h4>
-                    <p class="text-small">System diagnostics and logs</p>
-                    <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-3);" onclick="openDebugTools(); return false;">Debug →</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Debug Log -->
         <div class="debug-section">
-            <div class="flex-between" style="margin-bottom: var(--space-4);">
-                <div class="flex-center">
-                    <span class="badge badge-info" style="margin-right: var(--space-3);">ICT CTL</span>
-                    <h4 style="margin-bottom: 0;">System Debug Log</h4>
-                </div>
-                <button class="btn btn-secondary btn-sm" onclick="clearLogs()">Clear</button>
+            <div class="debug-header">
+                <h3>🔧 System Debug Log</h3>
+                <button class="btn-copy" onclick="clearLogs()">Clear Logs</button>
             </div>
-            <div class="debug-log" id="debug-log">
-                <div><span class="debug-time">[10:15:23]</span> ✅ QR Scanner initialized</div>
-                <div><span class="debug-time">[10:15:24]</span> 📡 Found 6 test QR codes</div>
+            <div class="debug-log" id="debugLog">
+                <div><span class="debug-time">[10:15:23]</span> ✅ QRcovery system initialized</div>
+                <div><span class="debug-time">[10:15:24]</span> 📡 Found test QR codes</div>
                 <div><span class="debug-time">[10:15:25]</span> 🔗 System ready for testing</div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Category tabs
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                const category = this.dataset.category;
-                document.querySelectorAll('.product-card').forEach(card => {
-                    if (category === 'all' || card.dataset.category === category) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        });
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 QRcovery — Developed by the ICT CTL Team of Haile-Manas Academy</p>
+            <p style="margin-top: 8px; font-size: 12px;">Scan. Connect. Recover.</p>
+        </div>
+    </footer>
 
-        // Copy function with fallback
-        function copyCode(code) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(code).then(() => {
-                    alert(`✅ Code ${code} copied to clipboard!`);
-                    addToLog(`📋 Copied ${code} to clipboard`);
-                }).catch(() => fallbackCopy(code));
-            } else {
-                fallbackCopy(code);
-            }
+    <script>
+        const testItems = [
+            { code: 'IPAD001', name: 'iPad Pro', owner: 'Jovani Tewodros', email: 'jovanitewodros72@gmail.com' },
+            { code: 'AIRP001', name: 'AirPods Pro', owner: 'Jovani Tewodros', email: 'jovanitewodros72@gmail.com' },
+            { code: 'IPAD002', name: 'iPad Air', owner: 'Meron Shitaye', email: 'meri.shitaye@gmail.com' },
+            { code: 'PEN001', name: 'Apple Pencil', owner: 'Meron Shitaye', email: 'meri.shitaye@gmail.com' },
+            { code: 'MAC001', name: 'MacBook Air', owner: 'Meron Shitaye', email: 'meron2028@hmacademy.org' },
+            { code: 'CALC001', name: 'TI-84 Calculator', owner: 'Meron Shitaye', email: 'meron2028@hmacademy.org' }
+        ];
+
+        function loadTestCodes() {
+            const grid = document.getElementById('testGrid');
+            grid.innerHTML = testItems.map(item => `
+                <div class="test-card">
+                    <h3>${item.name}</h3>
+                    <div class="code">Code: ${item.code}</div>
+                    <div class="owner">Owner: ${item.owner}<br>${item.email}</div>
+                    <a href="/report.html?code=${item.code}" class="btn-test" target="_blank">🔍 Test Scan</a>
+                    <button class="btn-copy" onclick="copyCode('${item.code}')">📋 Copy Code</button>
+                </div>
+            `).join('');
         }
 
-        function fallbackCopy(code) {
-            const temp = document.createElement('textarea');
-            temp.value = code;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
-            alert(`✅ Code ${code} copied to clipboard!`);
-            addToLog(`📋 Copied ${code} to clipboard`);
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                addToLog(`📋 Copied ${code} to clipboard`);
+                alert(`✅ Code ${code} copied to clipboard!`);
+            });
         }
 
         function addToLog(msg) {
-            const log = document.getElementById('debug-log');
+            const log = document.getElementById('debugLog');
             const time = new Date().toLocaleTimeString();
             const newLog = document.createElement('div');
             newLog.innerHTML = `<span class="debug-time">[${time}]</span> ${msg}`;
             log.insertBefore(newLog, log.firstChild);
         }
 
-        function runAllTests() {
-            addToLog('🚀 Running all tests...');
-            setTimeout(() => addToLog('✅ All tests passed'), 1000);
-        }
-
-        function runTestSuite() {
-            addToLog('🔬 Running test suite...');
-            setTimeout(() => addToLog('✅ Test suite completed'), 1500);
-        }
-
-        function openDebugTools() {
-            addToLog('🔧 Debug tools initialized');
-        }
-
         function clearLogs() {
-            document.getElementById('debug-log').innerHTML = '<div><span class="debug-time">[12:00:00]</span> 🧹 Logs cleared</div>';
+            document.getElementById('debugLog').innerHTML = '<div><span class="debug-time">[12:00:00]</span> 🧹 Logs cleared</div>';
         }
+
+        loadTestCodes();
     </script>
 </body>
 </html>
