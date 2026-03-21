@@ -3,220 +3,488 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HMA Lost and Found System</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>QRcovery - Smart Item Recovery System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           QRcovery - Modern Light Theme Dashboard
+           ======================================== */
+
+        /* ---------- CSS Variables ---------- */
+        :root {
+            --gold: #d4af37;
+            --gold-dark: #b38f00;
+            --gold-light: #f5e6b0;
+            --bg-page: #f8f9fb;
+            --bg-card: #ffffff;
+            --text-primary: #1a1f36;
+            --text-secondary: #5a6e8a;
+            --text-tertiary: #8a99b0;
+            --border: #e9edf2;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.02);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-lg: 0 12px 24px rgba(0,0,0,0.04), 0 4px 8px rgba(0,0,0,0.02);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* ---------- Container ---------- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---------- Navigation ---------- */
+        .navbar {
+            background: var(--bg-card);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a.active {
+            color: var(--gold);
+        }
+
+        .nav-links .auth-link {
+            background: var(--gold);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+        }
+
+        .nav-links .auth-link:hover {
+            background: var(--gold-dark);
+            color: white;
+        }
+
+        /* ---------- Stats Grid ---------- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 32px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ---------- Section Styles ---------- */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        /* ---------- Quick Actions Card ---------- */
+        .actions-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .actions-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .actions-card p {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .actions-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-1px);
+        }
+
+        /* ---------- Recent Items ---------- */
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .recent-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .recent-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .recent-item-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .recent-location {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .recent-date {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--gold-light);
+            color: var(--gold-dark);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 12px;
+        }
+
+        /* ---------- Footer ---------- */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .footer p {
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .recent-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .navbar .container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .recent-grid {
+                grid-template-columns: 1fr;
+            }
+            .actions-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ---------- Status Badges ---------- */
+        .status-found {
+            background: #10b98120;
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="top-nav">
-        <div class="nav-container">
-            <div class="flex-center">
-                <img src="/assets/hma-logo.png" alt="HMA" style="height: 40px; margin-right: var(--space-3);">
-                <span style="font-weight: 600; color: var(--hma-blue);">Lost and Found</span>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">QR</div>
+                <div class="logo-text"><span>QR</span>covery</div>
             </div>
             <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/discover.html">Discover</a>
-    <a href="/report.html">Scan QR</a>
-    <a href="/report-manual.html">Report Item</a>
-    <a href="/test-codes.html">Test Codes</a>
-    <a href="/register.html" class="auth-link">Register</a>
-    <a href="/login.html" class="auth-link">Login</a>
-    <a href="/profile.html" class="auth-link profile-link" style="display:none;">Profile</a>
-</div>
-            <div class="flex-center">
-                <span class="text-small" style="margin-right: var(--space-3);">ICT CTL Team</span>
-                <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 18px;">🔧</div>
+                <a href="/" class="active">Home</a>
+                <a href="/discover.html">Discover</a>
+                <a href="/report.html">Scan QR</a>
+                <a href="/report-manual.html">Report Item</a>
+                <a href="/test-codes.html">Test Codes</a>
+                <a href="/register.html" class="auth-link">Register</a>
+                <a href="/login.html" class="auth-link">Login</a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Dashboard -->
-    <div class="container">
-        <div class="dashboard-grid">
-            <!-- Left Sidebar (Profile Style) -->
-            <div class="profile-sidebar">
-                <div class="logo-area">
-                    <img src="/assets/hma-logo.png" alt="Haile-Manas Academy">
-                    <span>ICT CTL Team</span>
-                </div>
-                
-                <div class="stats-row" style="grid-template-columns: 1fr 1fr; gap: var(--space-2);">
-                    <div class="stat-item">
-                        <div class="stat-value">247</div>
-                        <div class="stat-label">Total Items</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">189</div>
-                        <div class="stat-label">Returned</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">58</div>
-                        <div class="stat-label">Pending</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">124</div>
-                        <div class="stat-label">QR Active</div>
-                    </div>
-                </div>
-
-                <div class="section-card" style="margin-top: var(--space-4);">
-                    <h4>Quick Actions</h4>
-                    <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-                        <a href="/scan-qr.html" class="btn btn-primary btn-block">📷 Scan QR Code</a>
-                        <a href="/report-item.html" class="btn btn-secondary btn-block">📝 Report Item</a>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <h4>System Status</h4>
-                    <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-                        <div class="flex-between">
-                            <span class="text-small">Database</span>
-                            <span class="badge badge-success">Online</span>
-                        </div>
-                        <div class="flex-between">
-                            <span class="text-small">Email Service</span>
-                            <span class="badge badge-success">Active</span>
-                        </div>
-                        <div class="flex-between">
-                            <span class="text-small">QR Scanner</span>
-                            <span class="badge badge-success">Ready</span>
-                        </div>
-                    </div>
-                </div>
+    <main class="container">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" id="total-items">247</div>
+                <div class="stat-label">Total Items Reported</div>
+                <div class="stat-trend">↑ 12 this week</div>
             </div>
-
-            <!-- Main Content Area -->
-            <div class="main-content">
-                <!-- Profile Header -->
-                <div class="profile-header">
-                    <div class="profile-avatar">📋</div>
-                    <div class="profile-info">
-                        <h1>HMA Lost and Found System</h1>
-                        <p>Developed and maintained by the ICT CTL Team • Haile-Manas Academy</p>
-                    </div>
-                </div>
-
-                <!-- Stats Row (from inspiration) -->
-                <div class="stats-row">
-                    <div class="stat-item">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">My Reports</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">Found Items</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">5</div>
-                        <div class="stat-label">Notifications</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">2</div>
-                        <div class="stat-label">Achievements</div>
-                    </div>
-                </div>
-
-                <!-- My Courses / Recent Items Section (from inspiration) -->
-                <div class="section-title">
-                    <h3>Recently Found Items</h3>
-                    <a href="/discover.html">View All →</a>
-                </div>
-                
-                <div class="item-list" id="recent-items">
-                    <!-- Populated by JavaScript -->
-                    <div class="item-row">
-                        <div class="item-info">
-                            <h4>iPad Pro 12.9"</h4>
-                            <p>Found at Library • 2 hours ago</p>
-                        </div>
-                        <span class="badge badge-warning">Found</span>
-                    </div>
-                    <div class="item-row">
-                        <div class="item-info">
-                            <h4>AirPods Pro</h4>
-                            <p>Found at Gym • 5 hours ago</p>
-                        </div>
-                        <span class="badge badge-warning">Found</span>
-                    </div>
-                    <div class="item-row">
-                        <div class="item-info">
-                            <h4>TI-84 Calculator</h4>
-                            <p>Found at Dining Hall • Yesterday</p>
-                        </div>
-                        <span class="badge badge-warning">Found</span>
-                    </div>
-                </div>
-
-                <!-- Payment / Premium Section (from inspiration) -->
-                <div class="info-card">
-                    <h4>ICT CTL System Access</h4>
-                    <p>Developed and maintained by the ICT CTL Team of Haile-Manas Academy to support the HMA community through technology-driven solutions.</p>
-                    <ul>
-                        <li>✓ Real-time QR code scanning</li>
-                        <li>✓ Automatic email notifications</li>
-                        <li>✓ Centralized lost & found database</li>
-                        <li>✓ 24/7 system availability</li>
-                    </ul>
-                    <div class="flex-between" style="margin-top: var(--space-4);">
-                        <span class="text-small" style="color: rgba(255,255,255,0.8);">System Version 2.0.0</span>
-                        <button class="btn btn-primary btn-sm" onclick="window.location.href='/report-item.html'">Report Item →</button>
-                    </div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="returned-items">189</div>
+                <div class="stat-label">Successfully Returned</div>
+                <div class="stat-trend">↑ 8 this week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="pending-items">58</div>
+                <div class="stat-label">Awaiting Identification</div>
+                <div class="stat-trend">→ 2 new</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📱</div>
+                <div class="stat-value" id="qr-reports">124</div>
+                <div class="stat-label">Active QR Reports</div>
+                <div class="stat-trend">↑ 5 today</div>
             </div>
         </div>
-    </div>
 
-    <!-- New Feature: User Accounts Section -->
-<div class="feature-section" style="margin: 60px 0;">
-    <div class="section-title">
-        <h2>✨ New: Student Accounts</h2>
-        <p>Register now to manage your items and generate personal QR codes</p>
-    </div>
-    
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
-        <div class="feature-card" style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-            <div style="font-size: 48px; margin-bottom: 20px;">📝</div>
-            <h3>Create Account</h3>
-            <p>Register with your school email and create your personal profile</p>
+        <!-- Quick Actions -->
+        <div class="actions-card">
+            <h3>Quick Actions</h3>
+            <p>Found something? Scan a QR code or report a lost item in seconds.</p>
+            <div class="actions-buttons">
+                <a href="/scan-qr.html" class="btn btn-primary">📷 Scan QR Code</a>
+                <a href="/report-manual.html" class="btn btn-outline">📝 Report Found Item</a>
+            </div>
         </div>
-        
-        <div class="feature-card" style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-            <div style="font-size: 48px; margin-bottom: 20px;">📱</div>
-            <h3>Add Your Items</h3>
-            <p>Register your belongings and get unique QR codes for each item</p>
-        </div>
-        
-        <div class="feature-card" style="text-align: center; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
-            <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
-            <h3>Track & Recover</h3>
-            <p>When someone scans your QR code, you get instant email notification</p>
-        </div>
-    </div>
-    
-    <div style="text-align: center; margin-top: 40px;">
-        <a href="/register.html" class="btn btn-primary" style="padding: 15px 40px; font-size: 18px;">Get Started Now →</a>
-    </div>
-</div>
 
+        <!-- Recently Found Items -->
+        <h2 class="section-title">Recently Found Items</h2>
+        <div class="recent-grid" id="recent-items">
+            <div class="recent-card">
+                <div class="recent-item-name">AirPods Pro</div>
+                <div class="recent-location">📍 Found at Computer Lab</div>
+                <div class="recent-date">📅 3 days ago</div>
+                <span class="badge">🔗 QR Tagged</span>
+            </div>
+            <div class="recent-card">
+                <div class="recent-item-name">iPad Air</div>
+                <div class="recent-location">📍 Found at Library</div>
+                <div class="recent-date">📅 5 days ago</div>
+                <span class="badge">🔗 QR Tagged</span>
+            </div>
+            <div class="recent-card">
+                <div class="recent-item-name">TI-84 Calculator</div>
+                <div class="recent-location">📍 Found at Cafeteria</div>
+                <div class="recent-date">📅 1 week ago</div>
+                <span class="badge">❓ Unclaimed</span>
+            </div>
+        </div>
+    </main>
 
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 QRcovery — Developed by the ICT CTL Team of Haile-Manas Academy</p>
+            <p style="margin-top: 8px; font-size: 12px;">Scan. Connect. Recover.</p>
+        </div>
+    </footer>
 
     <script>
-        // Load real data from API
+        // Fetch real data from API
+        fetch('/api/stats')
+            .then(res => res.json())
+            .then(stats => {
+                if (stats) {
+                    document.getElementById('total-items').textContent = stats.totalItems || 247;
+                    document.getElementById('returned-items').textContent = stats.totalReports || 189;
+                    document.getElementById('pending-items').textContent = stats.totalUnknown || 58;
+                    document.getElementById('qr-reports').textContent = stats.totalUsers || 124;
+                }
+            })
+            .catch(err => console.log('Stats not available'));
+
         fetch('/api/recent-qr')
             .then(res => res.json())
             .then(items => {
+                const container = document.getElementById('recent-items');
                 if (items && items.length > 0) {
-                    const list = document.getElementById('recent-items');
-                    list.innerHTML = items.slice(0, 3).map(item => `
-                        <div class="item-row">
-                            <div class="item-info">
-                                <h4>${item.item_name || 'Unknown Item'}</h4>
-                                <p>Found at ${item.location || 'Unknown'} • ${new Date(item.timestamp).toLocaleDateString()}</p>
-                            </div>
-                            <span class="badge badge-warning">Found</span>
+                    container.innerHTML = items.slice(0, 3).map(item => `
+                        <div class="recent-card">
+                            <div class="recent-item-name">${item.item_name || 'Unknown Item'}</div>
+                            <div class="recent-location">📍 Found at ${item.location || 'Unknown'}</div>
+                            <div class="recent-date">📅 ${new Date(item.timestamp).toLocaleDateString()}</div>
+                            <span class="badge">🔗 QR Tagged</span>
                         </div>
                     `).join('');
                 }
