@@ -39,13 +39,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// ===== UPLOADS DIRECTORY SETUP =====
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
-    console.log('✅ Created uploads directory');
 }
-
 // ===== MULTER CONFIGURATION =====
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
