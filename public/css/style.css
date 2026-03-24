@@ -1,0 +1,223 @@
+/* ==========================================
+   QRcovery – Advanced Interactive UI
+   ========================================== */
+
+:root {
+    --gold: #d4af37;
+    --gold-dark: #b38f00;
+    --gold-light: #ffe6b3;
+    --bg-page: #0a0f1f;           /* dark base for particles */
+    --bg-card: rgba(20, 30, 45, 0.8);
+    --text-primary: #ffffff;
+    --text-secondary: #cfd8e6;
+    --text-tertiary: #9aa9c1;
+    --border: rgba(212, 175, 55, 0.3);
+    --shadow-sm: 0 5px 15px rgba(0,0,0,0.1);
+    --shadow-md: 0 10px 25px rgba(0,0,0,0.2);
+    --shadow-lg: 0 20px 40px rgba(0,0,0,0.3);
+    --shadow-gold: 0 0 15px rgba(212,175,55,0.5);
+    --radius: 20px;
+    --radius-sm: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ========== PARTICLE BACKGROUND ========== */
+#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(circle at 20% 30%, #1a1f2f, #0a0f1f);
+}
+
+/* ========== NAVIGATION ========== */
+.navbar {
+    background: rgba(10, 15, 31, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+.navbar:hover {
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(212,175,55,0.2);
+}
+.nav-links a {
+    position: relative;
+    transition: all 0.2s;
+}
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: width 0.3s ease;
+}
+.nav-links a:hover::after {
+    width: 100%;
+}
+.nav-links a:hover {
+    color: var(--gold);
+    text-shadow: 0 0 5px rgba(212,175,55,0.5);
+}
+.auth-link {
+    background: linear-gradient(45deg, var(--gold), var(--gold-dark));
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.auth-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212,175,55,0.4);
+    background: linear-gradient(45deg, var(--gold-dark), var(--gold));
+}
+
+/* ========== CARDS with 3D TILT ========== */
+.card, .stat-card, .item-card, .feature-card, .test-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    box-shadow: var(--shadow-sm);
+    transform-style: preserve-3d;
+}
+.card:hover, .stat-card:hover, .item-card:hover, .feature-card:hover, .test-card:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
+    box-shadow: var(--shadow-lg), var(--shadow-gold);
+    border-color: var(--gold);
+}
+.stat-card .stat-value {
+    background: linear-gradient(135deg, var(--gold), #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 20px rgba(212,175,55,0.3);
+}
+
+/* ========== BUTTONS ========== */
+.btn, .btn-primary, .btn-secondary, .btn-login, .btn-register, .btn-submit {
+    background: linear-gradient(45deg, var(--gold), var(--gold-dark));
+    border: none;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+.btn:hover::before {
+    left: 100%;
+}
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(212,175,55,0.5);
+}
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* ========== FORM INPUTS ========== */
+input, select, textarea {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(212,175,55,0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: white;
+    transition: all 0.3s;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+    outline: none;
+}
+
+/* ========== ANIMATED BACKGROUND GLOW ========== */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.page-header, .profile-header {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite;
+}
+
+/* ========== LOADING SPINNER ========== */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(212,175,55,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========== SUCCESS MESSAGE WITH EMOJIS ========== */
+.message.success {
+    background: rgba(16, 185, 129, 0.2);
+    border-left: 4px solid #10b981;
+    backdrop-filter: blur(8px);
+    color: #10b981;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.message.success::before {
+    content: '🎉✨';
+    font-size: 24px;
+    animation: bounce 0.5s ease;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .card, .stat-card, .item-card {
+        transform: none !important;
+    }
+}

@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Scan QR - QRcovery</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
         * {
             margin: 0;
@@ -16,55 +17,64 @@
             --gold: #d4af37;
             --gold-dark: #b38f00;
             --gold-light: #f5e6b0;
-            --bg-page: #f8f9fb;
-            --bg-card: #ffffff;
-            --text-primary: #1a1f36;
-            --text-secondary: #5a6e8a;
-            --text-tertiary: #8a99b0;
-            --border: #e9edf2;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.02);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.03);
-            --shadow-lg: 0 12px 24px rgba(0,0,0,0.04);
-            --radius: 16px;
-            --radius-sm: 10px;
+            --bg-page: #0a0f1f;
+            --bg-card: rgba(20, 30, 45, 0.85);
+            --text-primary: #ffffff;
+            --text-secondary: #cfd8e6;
+            --text-tertiary: #9aa9c1;
+            --border: rgba(212, 175, 55, 0.3);
+            --shadow-sm: 0 5px 15px rgba(0,0,0,0.1);
+            --shadow-md: 0 10px 25px rgba(0,0,0,0.2);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.3);
+            --shadow-gold: 0 0 15px rgba(212,175,55,0.5);
+            --radius: 20px;
+            --radius-sm: 12px;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-page);
             color: var(--text-primary);
-            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 24px;
+        /* ---------- Particles canvas ---------- */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
-        /* Navigation */
+        /* ---------- Navigation ---------- */
         .navbar {
-            background: var(--bg-card);
-            padding: 16px 24px;
+            background: rgba(10, 15, 31, 0.85);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all 0.3s ease;
         }
-
         .navbar .container {
+            max-width: 1100px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0;
         }
-
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .logo-icon {
             width: 36px;
             height: 36px;
@@ -77,82 +87,93 @@
             font-weight: 700;
             font-size: 18px;
         }
-
         .logo-text {
             font-size: 20px;
             font-weight: 700;
             color: var(--text-primary);
         }
-
         .logo-text span {
             color: var(--gold);
         }
-
         .nav-links {
             display: flex;
             align-items: center;
             gap: 24px;
         }
-
         .nav-links a {
             text-decoration: none;
             color: var(--text-secondary);
             font-size: 14px;
             font-weight: 500;
             transition: color 0.2s;
+            position: relative;
         }
-
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
         .nav-links a:hover {
             color: var(--gold);
+            text-shadow: 0 0 5px rgba(212,175,55,0.5);
         }
-
         .nav-links a.active {
             color: var(--gold);
         }
-
         .auth-link {
-            background: var(--gold);
+            background: linear-gradient(45deg, var(--gold), var(--gold-dark));
             color: white !important;
             padding: 8px 20px;
             border-radius: 40px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
-
         .auth-link:hover {
-            background: var(--gold-dark);
-            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.4);
+        }
+        .auth-link::after {
+            display: none;
         }
 
-        /* Form Container */
+        /* ---------- Form container ---------- */
         .form-container {
             max-width: 550px;
             margin: 48px auto;
             background: var(--bg-card);
+            backdrop-filter: blur(8px);
             border-radius: var(--radius);
             padding: 36px;
             border: 1px solid var(--border);
             box-shadow: var(--shadow-md);
         }
-
         .form-header {
             text-align: center;
             margin-bottom: 28px;
         }
-
         .form-header h1 {
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--gold), #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
         .form-header p {
             color: var(--text-tertiary);
             font-size: 14px;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
         .form-group label {
             display: block;
             font-size: 13px;
@@ -160,55 +181,67 @@
             color: var(--text-secondary);
             margin-bottom: 6px;
         }
-
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
             padding: 12px 14px;
+            background: rgba(255,255,255,0.05);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s;
-            background: var(--bg-card);
+            color: white;
+            transition: all 0.3s;
         }
-
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            outline: none;
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+            outline: none;
         }
-
         .form-group input[readonly] {
-            background: var(--bg-page);
+            background: rgba(255,255,255,0.02);
             color: var(--text-tertiary);
         }
-
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background: var(--gold);
-            color: white;
+            background: linear-gradient(45deg, var(--gold), var(--gold-dark));
             border: none;
             border-radius: 40px;
             font-weight: 600;
             font-size: 15px;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn-submit:hover::before {
+            left: 100%;
+        }
         .btn-submit:hover {
-            background: var(--gold-dark);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212,175,55,0.5);
         }
-
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
         .btn-submit:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
         }
 
         .loading {
@@ -221,7 +254,6 @@
             animation: spin 0.8s linear infinite;
             margin-left: 8px;
         }
-
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -232,27 +264,34 @@
             margin-bottom: 20px;
             font-size: 14px;
             display: none;
+            backdrop-filter: blur(4px);
         }
-
         .message.success {
-            background: #10b98120;
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
             color: #10b981;
-            border: 1px solid #10b98130;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-
+        .message.success::before {
+            content: '🎉✨';
+            font-size: 24px;
+            animation: bounce 0.5s ease;
+        }
         .message.error {
-            background: #ef444420;
-            color: #dc2626;
-            border: 1px solid #ef444430;
-            display: block;
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 4px solid #ef4444;
+            color: #ef4444;
         }
-
         .message.info {
-            background: var(--gold-light);
-            color: var(--gold-dark);
-            border: 1px solid var(--gold);
-            display: block;
+            background: rgba(212,175,55,0.2);
+            border-left: 4px solid var(--gold);
+            color: var(--gold);
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         #loading-state {
@@ -267,7 +306,6 @@
             text-align: center;
             margin-top: 48px;
         }
-
         .footer p {
             color: var(--text-tertiary);
             font-size: 13px;
@@ -291,6 +329,8 @@
     </style>
 </head>
 <body>
+
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="logo">
@@ -309,6 +349,7 @@
         </div>
     </nav>
 
+    <!-- Main Form -->
     <div class="container">
         <div class="form-container">
             <div class="form-header">
@@ -317,7 +358,7 @@
             </div>
 
             <div id="loading-state">
-                <div style="width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                <div style="width: 40px; height: 40px; border: 3px solid rgba(212,175,55,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
                 <p>Loading item information...</p>
             </div>
 
@@ -393,112 +434,198 @@
         </div>
     </footer>
 
+    <!-- Particles canvas -->
+    <canvas id="particles"></canvas>
+
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-    // Initialize EmailJS with your public key
-    emailjs.init('bRVHUE9wFV4psMnIu');
-    console.log('✅ EmailJS initialized');
+    <script>
+        // ---------- Particles ----------
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+        let particlesArray = [];
+        const numberOfParticles = 80;
 
-    const loadingDiv = document.getElementById('loading-state');
-    const errorDiv = document.getElementById('error-message');
-    const form = document.getElementById('reportForm');
-
-    if (!code) {
-        loadingDiv.style.display = 'none';
-        errorDiv.style.display = 'block';
-        errorDiv.innerHTML = '❌ No QR code detected. Please scan a valid QRcovery code.';
-    } else {
-        fetch(`/api/item/${code}`)
-            .then(response => {
-                if (!response.ok) throw new Error('Item not found');
-                return response.json();
-            })
-            .then(item => {
-                document.getElementById('item_code').value = code;
-                document.getElementById('item_name').value = `${item.item_name}${item.description ? ' - ' + item.description : ''}`;
-                document.getElementById('owner_name').value = item.owner_name || '';
-                document.getElementById('owner_email').value = item.owner_email || '';
-
-                loadingDiv.style.display = 'none';
-                form.style.display = 'block';
-            })
-            .catch(err => {
-                loadingDiv.style.display = 'none';
-                errorDiv.style.display = 'block';
-                errorDiv.innerHTML = `❌ Item not found. Code: ${code} is not registered in QRcovery.`;
-            });
-    }
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.innerHTML = 'Sending <span class="loading"></span>';
-        btn.disabled = true;
-
-        const ownerEmail = document.getElementById('owner_email').value;
-        const location = document.getElementById('location').value;
-        const notes = document.getElementById('notes').value;
-        const finderName = document.getElementById('finder_name').value || 'Anonymous';
-        const finderEmail = document.getElementById('finder_email').value || 'Not provided';
-        const photoFile = document.getElementById('photo').files[0];
-
-        // Simple template params WITHOUT photo attachment first (to test)
-        const templateParams = {
-            to_email: ownerEmail,
-            from_name: 'QRcovery',
-            location: location,
-            notes: notes,
-            finder_name: finderName,
-            finder_email: finderEmail
-        };
-
-        console.log('📧 Sending email to:', ownerEmail);
-        console.log('📧 Using Service ID: service_ym11glb');
-        console.log('📧 Using Template ID: template_mgg9tjx');
-        console.log('📧 Template params:', templateParams);
-
-        try {
-            // Send email
-            const response = await emailjs.send('service_ym11glb', 'template_mgg9tjx', templateParams);
-            console.log('✅ Email sent successfully:', response);
-            
-            // Save report to database
-            const formData = new FormData();
-            formData.append('item_code', code);
-            formData.append('location', location);
-            formData.append('finder_name', finderName);
-            formData.append('finder_email', finderEmail);
-            formData.append('notes', notes);
-            if (photoFile) formData.append('photo', photoFile);
-
-            await fetch('/api/report', { method: 'POST', body: formData });
-            
-            const successDiv = document.createElement('div');
-            successDiv.className = 'message success';
-            successDiv.innerHTML = '✅ Notification sent! Redirecting to Discover...';
-            form.parentNode.insertBefore(successDiv, form);
-            form.style.display = 'none';
-            
-            setTimeout(() => { window.location.href = '/discover.html'; }, 2000);
-            
-        } catch (err) {
-            console.error('❌ Email error details:', err);
-            console.error('❌ Error status:', err.status);
-            console.error('❌ Error text:', err.text);
-            
-            btn.innerHTML = 'Send Notification to Owner';
-            btn.disabled = false;
-            
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'message error';
-            errorMsg.innerHTML = `❌ Failed to send email: ${err.text || 'Please check EmailJS configuration'}`;
-            form.parentNode.insertBefore(errorMsg, form);
-            setTimeout(() => errorMsg.remove(), 5000);
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 4 + 1;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.speedY = (Math.random() - 0.5) * 1;
+                this.color = `rgba(212, 175, 55, ${Math.random() * 0.5 + 0.2})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
         }
-    });
-</script>
+
+        function initParticles() {
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particlesArray = [];
+            initParticles();
+        });
+        initParticles();
+        animateParticles();
+
+        // ---------- EmailJS ----------
+        emailjs.init('bRVHUE9wFV4psMnIu');
+        console.log('✅ EmailJS initialized');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        const loadingDiv = document.getElementById('loading-state');
+        const errorDiv = document.getElementById('error-message');
+        const form = document.getElementById('reportForm');
+
+        if (!code) {
+            loadingDiv.style.display = 'none';
+            errorDiv.style.display = 'block';
+            errorDiv.innerHTML = '❌ No QR code detected. Please scan a valid QRcovery code.';
+        } else {
+            fetch(`/api/item/${code}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Item not found');
+                    return response.json();
+                })
+                .then(item => {
+                    document.getElementById('item_code').value = code;
+                    document.getElementById('item_name').value = `${item.item_name}${item.description ? ' - ' + item.description : ''}`;
+                    document.getElementById('owner_name').value = item.owner_name || '';
+                    document.getElementById('owner_email').value = item.owner_email || '';
+
+                    loadingDiv.style.display = 'none';
+                    form.style.display = 'block';
+                })
+                .catch(err => {
+                    loadingDiv.style.display = 'none';
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `❌ Item not found. Code: ${code} is not registered in QRcovery.`;
+                });
+        }
+
+        // Helper to show floating emoji
+        function showFloatingEmoji(emoji) {
+            const div = document.createElement('div');
+            div.textContent = emoji;
+            div.style.position = 'fixed';
+            div.style.bottom = '30px';
+            div.style.right = '30px';
+            div.style.fontSize = '48px';
+            div.style.zIndex = '9999';
+            div.style.filter = 'drop-shadow(0 0 10px gold)';
+            div.style.animation = 'floatUp 1s ease forwards';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 1500);
+        }
+        // Add keyframes if not already
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-80px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = 'Sending <span class="loading"></span>';
+            btn.disabled = true;
+
+            const ownerEmail = document.getElementById('owner_email').value;
+            const location = document.getElementById('location').value;
+            const notes = document.getElementById('notes').value;
+            const finderName = document.getElementById('finder_name').value || 'Anonymous';
+            const finderEmail = document.getElementById('finder_email').value || 'Not provided';
+
+            const templateParams = {
+                to_email: ownerEmail,
+                from_name: 'QRcovery',
+                location: location,
+                notes: notes,
+                finder_name: finderName,
+                finder_email: finderEmail
+            };
+
+            console.log('📧 Sending email to:', ownerEmail);
+            try {
+                await emailjs.send('service_ym11glb', 'template_mgg9tjx', templateParams);
+                console.log('✅ Email sent successfully');
+
+                // 🎉 CONFETTI
+                canvasConfetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#d4af37', '#f5e6b0', '#b38f00']
+                });
+
+                // 😍 Floating emoji
+                showFloatingEmoji('🎉✨✅');
+
+                // Save report to DB
+                const formData = new FormData();
+                formData.append('item_code', code);
+                formData.append('location', location);
+                formData.append('finder_name', finderName);
+                formData.append('finder_email', finderEmail);
+                formData.append('notes', notes);
+                const photoFile = document.getElementById('photo').files[0];
+                if (photoFile) formData.append('photo', photoFile);
+
+                await fetch('/api/report', { method: 'POST', body: formData });
+
+                // Show success message
+                const successDiv = document.createElement('div');
+                successDiv.className = 'message success';
+                successDiv.innerHTML = '✅ Notification sent! Redirecting to Discover...';
+                form.parentNode.insertBefore(successDiv, form);
+                form.style.display = 'none';
+                setTimeout(() => {
+                    window.location.href = '/discover.html';
+                }, 2000);
+
+            } catch (err) {
+                console.error('❌ Email error:', err);
+                btn.innerHTML = 'Send Notification to Owner';
+                btn.disabled = false;
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message error';
+                errorMsg.innerHTML = `❌ Failed to send email: ${err.text || 'Please check EmailJS configuration'}`;
+                form.parentNode.insertBefore(errorMsg, form);
+                setTimeout(() => errorMsg.remove(), 5000);
+            }
+        });
+    </script>
 </body>
 </html>
